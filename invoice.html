@@ -33,6 +33,8 @@
     .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
     .badge-unpaid{background:#fee2e2;color:#991b1b;}
     .badge-partial{background:#fef3c7;color:#92400e;}
+    .total-row.paid{color:#276749;font-weight:600;}
+    .badge-partial{background:#fef3c7;color:#92400e;}
     .badge-paid{background:#d1fae5;color:#065f46;}
     .items-table{width:100%;border-collapse:collapse;margin-bottom:28px;}
     .items-table thead tr{background:#f7fafc;}
@@ -109,8 +111,8 @@
       </div>
 
       <div class="status-row">
-        <span class="badge badge-unpaid">Payment Pending</span>
-        <span style="font-size:.78rem;color:#718096;">No advance received</span>
+        <span class="badge badge-partial">Partially Paid</span>
+        <span style="font-size:.78rem;color:#718096;">Advance received · Balance pending</span>
       </div>
 
       <table class="items-table">
@@ -152,7 +154,8 @@
         <div class="totals-box">
           <div class="total-row subtotal"><span>Subtotal</span><span>₹4,000.00</span></div>
           <div class="total-row subtotal"><span>GST (0%)</span><span>₹0.00</span></div>
-          <div class="total-row due"><span>Total Due</span><span>₹4,000.00</span></div>
+          <div class="total-row paid"><span>Advance Received</span><span>− ₹1,000.00</span></div>
+          <div class="total-row due"><span>Balance Due</span><span>₹3,000.00</span></div>
         </div>
       </div>
 
@@ -177,7 +180,7 @@
     <div class="inv-footer">
       <div class="footer-note">
         Thank you for choosing TechieRat Automation.<br>
-        Please transfer the full amount of <strong>₹4,000</strong> at your earliest convenience.
+        Please transfer the balance of <strong>₹3,000</strong> at your earliest convenience.
       </div>
       <div class="footer-thanks">TechieRat Automation</div>
     </div>
