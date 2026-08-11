@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Beemas Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap');
+    :root{
+      --pk:#e91e8c;--pk2:#ff4d9e;--ora:#ff7c2a;
+      --grad:linear-gradient(135deg,#e91e8c,#ff7c2a);
+      --glow:rgba(233,30,140,.4);
+      --bg:#08000d;--card:#120010;--border:#2a0020;
+      --text:#fff0f8;--muted:#a06080;--green:#80ffb8;--red:#ff6b6b;--radius:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px;}
+    .top-stripe{width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--pk),var(--ora),var(--pk),transparent);margin-bottom:28px;}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+    .brand img{height:44px;object-fit:contain;}
+    h1{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sub{font-size:.68rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px;}
+    .card{width:100%;max-width:700px;background:var(--card);border:1px solid rgba(233,30,140,.1);border-top:3px solid var(--pk);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+    .form-label{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:7px;}
+    .form-input{background:#08000d;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Poppins',sans-serif;font-size:1rem;font-weight:600;padding:12px 16px;outline:none;transition:border-color .2s;width:100%;}
+    .form-input:focus{border-color:var(--pk);}
+    .btn{width:100%;padding:15px;border:none;border-radius:var(--radius);font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:.04em;cursor:pointer;margin-top:14px;transition:transform .08s;}
+    .btn-primary{background:var(--grad);color:#fff;box-shadow:0 6px 24px var(--glow);}
+    .btn-primary:active{transform:scale(.97);}
+    .btn-danger{background:#120010;color:var(--pk2);border:1px solid rgba(233,30,140,.2);margin-top:8px;}
+    .section-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+    /* Restriction card */
+    .restrict-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+    .restrict-desc{flex:1;font-size:.82rem;color:var(--muted);line-height:1.5;min-width:180px;}
+    .restrict-desc strong{color:var(--text);}
+    .restrict-num{width:80px;background:#08000d;border:1px solid var(--pk);border-radius:10px;color:var(--pk2);font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;padding:8px 12px;outline:none;text-align:center;}
+    .restrict-save{background:var(--grad);border:none;color:#fff;border-radius:10px;padding:10px 20px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:transform .08s;}
+    .restrict-save:active{transform:scale(.97);}
+    .restrict-hint{font-size:.65rem;color:var(--muted);margin-top:8px;}
+    .restrict-status{font-size:.75rem;color:var(--green);margin-top:6px;min-height:16px;}
+
+    /* Prizes */
+    .prize-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;min-height:38px;}
+    .prize-icon{font-size:1.3rem;width:28px;text-align:center;flex-shrink:0;}
+    .prize-name{flex:1;font-size:.88rem;color:var(--text);font-weight:600;}
+    .prize-bar-wrap{flex:1;display:flex;flex-direction:column;gap:3px;}
+    .prize-bar-track{height:5px;background:var(--border);border-radius:100px;overflow:hidden;}
+    .prize-bar{height:100%;border-radius:100px;background:var(--grad);transition:width .4s;}
+    .prize-qty{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--pk2);min-width:36px;text-align:right;flex-shrink:0;}
+    .edit-btn{background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.25);color:var(--pk2);border-radius:8px;padding:4px 10px;font-size:.68rem;font-family:'Poppins',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s;}
+    .edit-btn:hover{background:rgba(233,30,140,.2);}
+    .edit-row{display:none;align-items:center;gap:8px;margin-bottom:12px;}
+    .edit-row.active{display:flex;}
+    .edit-row .prize-icon{flex-shrink:0;}
+    .edit-row .prize-name-sm{font-size:.8rem;color:var(--muted);flex:1;}
+    .qty-input{width:80px;background:#08000d;border:1px solid var(--pk);border-radius:8px;color:var(--pk2);font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;padding:6px 10px;outline:none;text-align:center;}
+    .save-btn{background:var(--grad);border:none;color:#fff;border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+    .cancel-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 10px;font-size:.78rem;cursor:pointer;}
+    .save-status{font-size:.72rem;color:var(--green);min-height:14px;margin-top:2px;}
+
+    /* Players table */
+    .table-wrap{overflow-x:auto;margin-top:4px;}
+    .players-table{width:100%;border-collapse:collapse;min-width:640px;}
+    .players-table th{padding:9px 10px;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+    .players-table td{padding:10px;font-size:.78rem;color:var(--text);border-bottom:1px solid var(--border);white-space:nowrap;}
+    .players-table tr:last-child td{border-bottom:none;}
+    .players-table tr:hover td{background:rgba(233,30,140,.04);}
+    .num-cell{text-align:center;color:var(--muted);}
+    .prize-cell-win{color:var(--green);font-weight:700;}
+    .prize-cell-no{color:var(--muted);}
+    .badge-att{display:inline-block;background:rgba(233,30,140,.1);color:var(--pk2);border-radius:20px;padding:2px 8px;font-size:.7rem;font-weight:700;}
+    .badge-fail{background:rgba(255,107,107,.1);color:var(--red);}
+    .badge-win{background:rgba(128,255,184,.1);color:var(--green);}
+
+    #loginScreen,#dashScreen{width:100%;display:flex;flex-direction:column;align-items:center;}
+    #dashScreen{display:none;}
+    .status-msg{text-align:center;font-size:.8rem;color:var(--muted);margin-top:10px;min-height:18px;}
+    .status-msg.error{color:#ff8888;}
+  </style>
+</head>
+<body>
+  <div class="top-stripe"></div>
+  <div class="brand">
+    <img src="logo.png" alt="Beemas" onerror="this.style.display='none'"/>
+  </div>
+  <h1>BEEMAS ADMIN</h1>
+  <div class="sub">Kavali, Nellore District · Dashboard</div>
+
+  <div id="loginScreen">
+    <div class="card" style="max-width:380px;">
+      <div class="section-title">Admin Login</div>
+      <label class="form-label">Password</label>
+      <input class="form-input" id="pwInput" type="password" placeholder="Enter admin password"/>
+      <button class="btn btn-primary" onclick="doLogin()">LOGIN</button>
+      <div class="status-msg error" id="loginErr"></div>
+    </div>
+  </div>
+
+  <div id="dashScreen">
+
+    <!-- PLAY RESTRICTION -->
+    <div class="card">
+      <div class="section-title">Play Restriction</div>
+      <div class="restrict-row">
+        <div class="restrict-desc">
+          <strong>Max plays per customer.</strong><br>
+          Set how many times one phone number can play. Enter <strong>0</strong> for unlimited.
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <input class="restrict-num" id="restrictInput" type="number" min="0" max="99" value="0"/>
+          <button class="restrict-save" onclick="saveRestriction()">SAVE</button>
+        </div>
+      </div>
+      <div class="restrict-hint">Current setting: <span id="restrictCurrent">loading…</span></div>
+      <div class="restrict-status" id="restrictStatus"></div>
+    </div>
+
+    <!-- PRIZE INVENTORY -->
+    <div class="card">
+      <div class="section-title">Prize Inventory</div>
+      <div id="prizesContent"><div style="color:var(--muted);font-size:.8rem;">Loading…</div></div>
+      <button class="btn btn-primary" onclick="loadPrizes()" style="margin-top:16px;">REFRESH</button>
+    </div>
+
+    <!-- RECENT PLAYERS -->
+    <div class="card">
+      <div class="section-title">Recent Players</div>
+      <div class="table-wrap">
+        <div id="playersContent"><div style="color:var(--muted);font-size:.8rem;">Loading…</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="loadPlayers()" style="margin-top:16px;">REFRESH</button>
+    </div>
+
+    <button class="btn btn-danger" style="max-width:700px;width:100%;" onclick="logout()">LOGOUT</button>
+  </div>
+
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxX7Xc15nAsGpSgfSbbjX_kwalc0WNd_XaHrb88U82XUSuEl0xx3MQ0wn3M9CKqP_tH2Q/exec';
+    const PASS = 'beemas123';
+
+    function doLogin(){
+      if(document.getElementById('pwInput').value === PASS){
+        document.getElementById('loginScreen').style.display='none';
+        document.getElementById('dashScreen').style.display='flex';
+        loadSettings(); loadPrizes(); loadPlayers();
+      } else {
+        document.getElementById('loginErr').textContent='Incorrect password.';
+      }
+    }
+    document.getElementById('pwInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+
+    // ── Settings ──────────────────────────────────────────────
+    async function loadSettings(){
+      try{
+        const res=await fetch(`${SHEET_URL}?action=getSettings`);
+        const data=await res.json();
+        const val=data.play_restriction||0;
+        document.getElementById('restrictInput').value=val;
+        document.getElementById('restrictCurrent').textContent=val===0?'0 (Unlimited)':val+' plays per customer';
+      }catch(e){ document.getElementById('restrictCurrent').textContent='Could not load'; }
+    }
+
+    async function saveRestriction(){
+      const val=parseInt(document.getElementById('restrictInput').value,10)||0;
+      document.getElementById('restrictStatus').textContent='Saving…';
+      try{
+        await fetch(`${SHEET_URL}?${new URLSearchParams({action:'setPlayRestriction',value:val})}`,{mode:'no-cors'});
+        document.getElementById('restrictCurrent').textContent=val===0?'0 (Unlimited)':val+' plays per customer';
+        document.getElementById('restrictStatus').textContent='✓ Saved!';
+        setTimeout(()=>{document.getElementById('restrictStatus').textContent='';},2000);
+      }catch(e){ document.getElementById('restrictStatus').textContent='Error saving.'; }
+    }
+
+    // ── Prizes ────────────────────────────────────────────────
+    let prizesData=[];
+
+    async function loadPrizes(){
+      const el=document.getElementById('prizesContent');
+      el.innerHTML='<div style="color:var(--muted);font-size:.8rem;">Loading…</div>';
+      try{
+        const res=await fetch(`${SHEET_URL}?action=getPrizes`);
+        const data=await res.json();
+        if(!data.prizes||!data.prizes.length){el.innerHTML='<div style="color:var(--muted);font-size:.8rem;">No prizes found.</div>';return;}
+        prizesData=data.prizes;
+        const max=Math.max(...data.prizes.map(p=>p.quantity),1);
+        el.innerHTML=data.prizes.map((p,i)=>`
+          <div class="prize-row" id="row-${i}">
+            <div class="prize-icon">${p.icon}</div>
+            <div class="prize-name">${p.name}</div>
+            <div class="prize-bar-wrap"><div class="prize-bar-track"><div class="prize-bar" style="width:${(p.quantity/max*100).toFixed(0)}%"></div></div></div>
+            <div class="prize-qty" id="qty-${i}">${p.quantity}</div>
+            <button class="edit-btn" onclick="startEdit(${i})">EDIT</button>
+          </div>
+          <div class="edit-row" id="edit-${i}">
+            <div class="prize-icon">${p.icon}</div>
+            <div class="prize-name-sm">${p.name}</div>
+            <input class="qty-input" id="qtyinput-${i}" type="number" value="${p.quantity}" min="0" max="9999"/>
+            <button class="save-btn" onclick="saveQty(${i})">SAVE</button>
+            <button class="cancel-btn" onclick="cancelEdit(${i})">✕</button>
+          </div>
+          <div class="save-status" id="savestatus-${i}"></div>
+        `).join('');
+      }catch(e){el.innerHTML='<div style="color:#ff8888;font-size:.8rem;">Error loading prizes.</div>';}
+    }
+
+    function startEdit(i){document.getElementById('row-'+i).style.display='none';document.getElementById('edit-'+i).classList.add('active');document.getElementById('qtyinput-'+i).focus();document.getElementById('savestatus-'+i).textContent='';}
+    function cancelEdit(i){document.getElementById('row-'+i).style.display='flex';document.getElementById('edit-'+i).classList.remove('active');}
+
+    async function saveQty(i){
+      const prize=prizesData[i];
+      const newQty=parseInt(document.getElementById('qtyinput-'+i).value,10);
+      if(isNaN(newQty)||newQty<0){document.getElementById('savestatus-'+i).textContent='Invalid number.';return;}
+      document.getElementById('savestatus-'+i).textContent='Saving…';
+      try{
+        await fetch(`${SHEET_URL}?${new URLSearchParams({action:'setPrizeQty',prizeId:prize.id,qty:newQty})}`,{mode:'no-cors'});
+        document.getElementById('qty-'+i).textContent=newQty;
+        prizesData[i].quantity=newQty;
+        document.getElementById('savestatus-'+i).textContent='✓ Saved!';
+        setTimeout(()=>{cancelEdit(i);document.getElementById('savestatus-'+i).textContent='';},900);
+      }catch(e){document.getElementById('savestatus-'+i).textContent='Error saving.';}
+    }
+
+    // ── Players ───────────────────────────────────────────────
+    async function loadPlayers(){
+      const el=document.getElementById('playersContent');
+      el.innerHTML='<div style="color:var(--muted);font-size:.8rem;">Loading…</div>';
+      try{
+        const res=await fetch(`${SHEET_URL}?action=getPlayers`);
+        const data=await res.json();
+        if(!data.players||!data.players.length){el.innerHTML='<div style="color:var(--muted);font-size:.8rem;">No players yet.</div>';return;}
+        const rows=data.players.slice(-50).reverse();
+        el.innerHTML=`<table class="players-table">
+          <thead><tr>
+            <th>#</th><th>Date</th><th>Time</th><th>Name</th><th>Phone</th>
+            <th style="text-align:center">Attempts</th><th style="text-align:center">Failed</th>
+            <th style="text-align:center">Success</th><th>Prize Won</th>
+          </tr></thead>
+          <tbody>
+            ${rows.map((p,i)=>{
+              const prize=p[8]||'No Gift', isWin=prize!=='No Gift';
+              return `<tr>
+                <td class="num-cell">${i+1}</td>
+                <td>${p[1]||'—'}</td><td>${p[2]||'—'}</td>
+                <td style="font-weight:600">${p[3]||'—'}</td>
+                <td>${p[4]||'—'}</td>
+                <td class="num-cell"><span class="badge-att">${p[5]||0}</span></td>
+                <td class="num-cell"><span class="badge-att badge-fail">${p[6]||0}</span></td>
+                <td class="num-cell"><span class="badge-att badge-win">${p[7]||0}</span></td>
+                <td class="${isWin?'prize-cell-win':'prize-cell-no'}">${isWin?'🏆 '+prize:'— No Gift'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+      }catch(e){el.innerHTML='<div style="color:var(--muted);font-size:.8rem;">No data yet.</div>';}
+    }
+
+    function logout(){
+      document.getElementById('dashScreen').style.display='none';
+      document.getElementById('loginScreen').style.display='flex';
+      document.getElementById('pwInput').value='';
+    }
+  </script>
+</body>
+</html>

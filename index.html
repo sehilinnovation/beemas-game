@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>Beemas — Spin & Win</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --pk:#e91e8c;--pk2:#ff4d9e;--ora:#ff7c2a;
+      --grad:linear-gradient(135deg,#e91e8c,#ff7c2a);
+      --glow:rgba(233,30,140,.45);
+      --bg:#08000d;--card:#120010;--border:#2a0020;
+      --text:#fff0f8;--muted:#a06080;--green:#80ffb8;--red:#ff6b6b;
+      --radius:14px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;overflow:hidden;background:var(--bg);}
+    body{font-family:'Poppins',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+    /* ─── Particles ──────────────────────────── */
+    #particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .dot{position:absolute;border-radius:50%;animation:float linear infinite;opacity:.18;}
+    @keyframes float{0%{transform:translateY(100vh) scale(0);}100%{transform:translateY(-120px) scale(1);}}
+
+    /* ─── Screens ────────────────────────────── */
+    .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:10;transition:opacity .35s,transform .35s;}
+    .screen.hidden{opacity:0;pointer-events:none;transform:scale(.97);}
+
+    /* ─── Logo ───────────────────────────────── */
+    .logo-wrap{margin-bottom:18px;text-align:center;}
+    .logo-wrap img{height:68px;object-fit:contain;filter:drop-shadow(0 0 18px var(--glow));}
+    .logo-fallback{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+    /* ─── Card shell ─────────────────────────── */
+    .glass{background:var(--card);border:1px solid rgba(233,30,140,.15);border-top:3px solid var(--pk);border-radius:var(--radius);padding:26px 22px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);}
+
+    /* ─── Register ───────────────────────────── */
+    .tagline{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;text-align:center;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;line-height:1.4;}
+    .form-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);display:block;margin-bottom:6px;}
+    .form-input{width:100%;background:#08000d;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Poppins',sans-serif;font-size:.95rem;padding:13px 16px;outline:none;transition:border-color .2s;margin-bottom:14px;}
+    .form-input:focus{border-color:var(--pk);}
+    .btn-primary{width:100%;padding:15px;border:none;border-radius:var(--radius);background:var(--grad);color:#fff;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:.04em;cursor:pointer;box-shadow:0 6px 28px var(--glow);transition:transform .08s,box-shadow .15s;}
+    .btn-primary:active{transform:scale(.97);box-shadow:0 3px 14px var(--glow);}
+    .form-status{font-size:.75rem;color:var(--red);min-height:18px;margin-top:6px;text-align:center;}
+    .restrict-msg{background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.3);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--pk2);text-align:center;line-height:1.5;margin-top:6px;display:none;}
+
+    /* ─── Instruction ────────────────────────── */
+    #instructScreen .glass{text-align:center;}
+    .inst-icon{font-size:2.8rem;margin-bottom:10px;}
+    .inst-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+    .inst-sub{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+
+    /* ─── Timer ──────────────────────────────── */
+    #timerScreen{background:var(--bg);}
+    .timer-top{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+    .timer-logo img{height:38px;object-fit:contain;}
+    .timer-logo span{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .bar-wrap{width:100%;max-width:380px;height:10px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:28px;}
+    .bar-fill{height:100%;width:100%;background:var(--grad);border-radius:100px;transition:width .05s linear;box-shadow:0 0 12px var(--glow);}
+    .tap-zone{width:100%;max-width:380px;text-align:center;cursor:pointer;user-select:none;}
+    .tap-circle{width:200px;height:200px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;background:radial-gradient(circle at 40% 35%,rgba(233,30,140,.25),transparent 70%);border:2px solid rgba(233,30,140,.3);transition:transform .08s,box-shadow .1s;box-shadow:0 0 40px rgba(233,30,140,.2);}
+    .tap-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(233,30,140,.15);animation:pulse-ring 1.8s ease-in-out infinite;}
+    @keyframes pulse-ring{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.06);opacity:.15;}}
+    .tap-circle:active{transform:scale(.94);box-shadow:0 0 60px rgba(233,30,140,.5);}
+    .tap-hint{font-size:.78rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+    .tap-score{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:900;margin-bottom:4px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-height:56px;}
+    .tap-score-label{font-size:.62rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;}
+
+    /* ─── Scratch screen ─────────────────────── */
+    #scratchScreen{background:var(--bg);}
+    .scratch-top{text-align:center;margin-bottom:18px;}
+    .scratch-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+    .scratch-sub{font-size:.72rem;color:var(--muted);}
+    .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:360px;margin:0 auto;}
+    .card-wrap{position:relative;width:100%;padding-bottom:100%;border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.5);}
+    .card-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:var(--radius);}
+    .card-prize.win{background:radial-gradient(135deg at 30% 30%,#1a0014,#08000d);}
+    .card-prize.lose{background:radial-gradient(135deg at 30% 30%,#0a0a0a,#050505);}
+    .card-prize-icon{font-size:2.1rem;line-height:1;}
+    .card-prize-name{font-family:'Playfair Display',serif;font-size:.68rem;font-weight:700;text-align:center;padding:0 6px;line-height:1.3;color:var(--pk2);}
+    .card-prize.lose .card-prize-name{color:var(--muted);}
+    .card-canvas{position:absolute;inset:0;border-radius:var(--radius);cursor:pointer;}
+    .card-canvas.scratched{pointer-events:none;}
+    .card-result{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .4s;}
+    .card-result.show-win{opacity:1;color:var(--green);}
+    .card-result.show-lose{opacity:1;color:var(--muted);}
+
+    /* ─── Result ─────────────────────────────── */
+    #resultScreen{background:var(--bg);}
+    #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:5;}
+    .result-box{text-align:center;}
+    .result-emoji{font-size:3.5rem;margin-bottom:10px;display:block;}
+    .result-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+    .result-prize{font-size:1rem;font-weight:600;color:var(--pk2);margin-bottom:6px;}
+    .result-sub{font-size:.75rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+    .progress-wrap{width:100%;background:var(--border);border-radius:100px;height:6px;overflow:hidden;margin-bottom:14px;}
+    .progress-bar{height:100%;background:var(--grad);border-radius:100px;transition:width .05s linear;}
+    .result-btn{width:100%;padding:14px;border:1px solid rgba(233,30,140,.25);border-radius:var(--radius);background:transparent;color:var(--pk2);font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s;}
+    .result-btn:hover{background:rgba(233,30,140,.08);}
+
+    /* ─── Confetti ───────────────────────────── */
+    #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:5;}
+  </style>
+</head>
+<body>
+
+<!-- Particles -->
+<div id="particles"></div>
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ① Registration -->
+<div class="screen" id="registerScreen">
+  <div class="logo-wrap">
+    <img src="logo.png" alt="Beemas" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+    <div class="logo-fallback" style="display:none">Beemas</div>
+  </div>
+  <div class="glass">
+    <div class="tagline">Scratch &amp; Win Exciting Prizes!</div>
+    <label class="form-label">Your Name</label>
+    <input class="form-input" id="nameInput" type="text" placeholder="Enter your name" autocomplete="off"/>
+    <label class="form-label">Phone Number</label>
+    <input class="form-input" id="phoneInput" type="tel" placeholder="+91 98765 43210" autocomplete="off"/>
+    <button class="btn-primary" id="submitBtn">LET'S PLAY</button>
+    <div class="form-status" id="formStatus"></div>
+    <div class="restrict-msg" id="restrictMsg"></div>
+  </div>
+</div>
+
+<!-- ② Instruction -->
+<div class="screen hidden" id="instructScreen">
+  <div class="glass">
+    <div class="inst-icon">⚡</div>
+    <div class="inst-title">Tap at the Right Moment!</div>
+    <div class="inst-sub">Watch the bar shrink to the <strong>green zone</strong> and tap at the perfect moment to win a big prize.<br><br>The better your timing — the better your reward!</div>
+    <button class="btn-primary" id="startBtn">START NOW</button>
+  </div>
+</div>
+
+<!-- ③ Timer Game -->
+<div class="screen hidden" id="timerScreen">
+  <div class="timer-top">
+    <div class="timer-logo">
+      <img src="logo.png" alt="B" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
+      <span style="display:none">Beemas</span>
+    </div>
+  </div>
+  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+  <div class="tap-zone" id="tapZone">
+    <div class="tap-score" id="tapScore"></div>
+    <div class="tap-score-label">Score</div>
+    <div class="tap-circle" id="tapCircle">🎯</div>
+    <div class="tap-hint">Tap to Stop!</div>
+  </div>
+</div>
+
+<!-- ④ Scratch Cards -->
+<div class="screen hidden" id="scratchScreen">
+  <div class="scratch-top">
+    <div class="scratch-title">Scratch &amp; Reveal!</div>
+    <div class="scratch-sub" id="scratchSub">Find your prize hidden under the cards</div>
+  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
+</div>
+
+<!-- ⑤ Result -->
+<div class="screen hidden" id="resultScreen">
+  <div class="glass result-box">
+    <span class="result-emoji" id="resultEmoji">🎊</span>
+    <div class="result-title" id="resultTitle">You Won!</div>
+    <div class="result-prize" id="resultPrize"></div>
+    <div class="result-sub" id="resultSub">Show this screen to our staff to claim your prize!</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:100%"></div></div>
+    <button class="result-btn" onclick="resetGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxX7Xc15nAsGpSgfSbbjX_kwalc0WNd_XaHrb88U82XUSuEl0xx3MQ0wn3M9CKqP_tH2Q/exec';
+const IS_TEST   = new URLSearchParams(location.search).has('test');
+
+const ALL_PRIZES = [
+  { id:'P1', icon:'🍦', name:'₹30 Off\nIce Cream',    winner:true  },
+  { id:'P2', icon:'🍔', name:'50% Off\nBurger',        winner:true  },
+  { id:'P3', icon:'🍕', name:'25% Off\nPizza',         winner:true  },
+  { id:'P4', icon:'🍛', name:'50% Off\nBiryani',       winner:true  },
+  { id:'P5', icon:'🥛', name:'Free\nBadam Milk',       winner:true  },
+];
+const LOSER = { id:'L0', icon:'😊', name:'Better Luck\nNext Time', winner:false };
+
+// ── Session tracking ─────────────────────────────────────────────
+let sesTotal=0, sesFailed=0, sesSuccess=0, sesPhone='', sesName='';
+
+async function sendSessionUpdate(prize) {
+  if (!sesPhone || SHEET_URL.startsWith('PASTE')) return;
+  try {
+    await fetch(`${SHEET_URL}?${new URLSearchParams({
+      action:'updateSession', phone:sesPhone,
+      total:sesTotal, failed:sesFailed, success:sesSuccess, prize:prize||'No Gift'
+    })}`, { method:'GET', mode:'no-cors' });
+  } catch(_) {}
+}
+
+// ── Particles ────────────────────────────────────────────────────
+(function(){
+  const c=['#e91e8c','#ff7c2a','#ff4d9e','#9c27b0','#ff8c42'];
+  for(let i=0;i<22;i++){
+    const d=document.createElement('div');
+    d.className='dot';
+    const s=Math.random()*6+3;
+    d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${c[i%c.length]};animation-duration:${Math.random()*12+8}s;animation-delay:-${Math.random()*12}s;`;
+    document.getElementById('particles').appendChild(d);
+  }
+})();
+
+// ── Screen helper ────────────────────────────────────────────────
+const screens = {};
+['register','instruct','timer','scratch','result'].forEach(id=>{
+  screens[id] = document.getElementById(id+'Screen');
+});
+function show(id){ Object.values(screens).forEach(s=>s.classList.add('hidden')); screens[id].classList.remove('hidden'); }
+
+// ── Audio ────────────────────────────────────────────────────────
+const ctx = new (window.AudioContext||window.webkitAudioContext)();
+function beep(f,d,vol=.4,type='sine'){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.frequency.value=f;o.type=type;
+  g.gain.setValueAtTime(vol,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+d);
+  o.start();o.stop(ctx.currentTime+d);
+}
+function winSound(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25,.35),i*130)); }
+function loseSound(){ [330,262].forEach((f,i)=>setTimeout(()=>beep(f,.3,.25,'sawtooth'),i*200)); }
+function tapSound(){ beep(660,.08,.2); }
+function scratchSound(){ beep(200+Math.random()*400,.04,.08,'sawtooth'); }
+
+// ── Confetti ─────────────────────────────────────────────────────
+let confettiPieces=[],confettiRunning=false;
+const cCanvas=document.getElementById('confettiCanvas');
+const cCtx=cCanvas.getContext('2d');
+function launchConfetti(){
+  cCanvas.width=innerWidth;cCanvas.height=innerHeight;
+  confettiPieces=Array.from({length:100},()=>({
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight-innerHeight,
+    w:Math.random()*10+6,h:Math.random()*5+3,
+    r:Math.random()*2*Math.PI,
+    vx:(Math.random()-.5)*3,vy:Math.random()*3+2,vr:(Math.random()-.5)*.15,
+    c:['#e91e8c','#ff7c2a','#ff4d9e','#9c27b0','#ffeb3b','#80ffb8'][Math.floor(Math.random()*6)]
+  }));
+  confettiRunning=true; animateConfetti();
+  setTimeout(()=>{confettiRunning=false;cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);},3500);
+}
+function animateConfetti(){
+  if(!confettiRunning)return;
+  cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+  confettiPieces.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+    if(p.y>cCanvas.height)p.y=-20;
+    cCtx.save();cCtx.translate(p.x,p.y);cCtx.rotate(p.r);
+    cCtx.fillStyle=p.c;cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cCtx.restore();
+  });
+  requestAnimationFrame(animateConfetti);
+}
+
+// ── Registration ─────────────────────────────────────────────────
+const submitBtn = document.getElementById('submitBtn');
+submitBtn.addEventListener('click', async ()=>{
+  const name  = document.getElementById('nameInput').value.trim();
+  const phone = document.getElementById('phoneInput').value.trim();
+  const status = document.getElementById('formStatus');
+  const rmsg   = document.getElementById('restrictMsg');
+  rmsg.style.display='none';
+  if(!name){ status.textContent='Please enter your name.'; return; }
+  if(phone.replace(/\D/g,'').length < 10){ status.textContent='Please enter a valid phone number.'; return; }
+  status.textContent='';
+  submitBtn.disabled=true;
+  submitBtn.textContent='Please wait…';
+
+  sesPhone = phone; sesName = name;
+
+  if(IS_TEST || SHEET_URL.startsWith('PASTE')){
+    sesTotal=0;sesFailed=0;sesSuccess=0;
+    show('instruct'); submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY"; return;
+  }
+
+  try {
+    const res  = await fetch(`${SHEET_URL}?${new URLSearchParams({action:'register',name,phone})}`);
+    const data = await res.json();
+    if(data.status==='restricted'){
+      rmsg.textContent = `You've already played ${data.playCount} time${data.playCount!==1?'s':''}. Max ${data.maxPlays} play${data.maxPlays!==1?'s':''} per customer. Thank you for visiting Beemas!`;
+      rmsg.style.display='block';
+      submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY"; return;
+    }
+  } catch(_){}
+
+  sesTotal=0;sesFailed=0;sesSuccess=0;
+  show('instruct');
+  submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY";
+});
+document.getElementById('phoneInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitBtn.click();});
+
+// ── Instruction ──────────────────────────────────────────────────
+document.getElementById('startBtn').addEventListener('click',()=>{ ctx.resume(); show('timer'); startTimer(); });
+
+// ── Timer Game ───────────────────────────────────────────────────
+let timerInterval=null, barPct=100, won=false;
+const BAR_DURATION=3500, WIN_ZONE=[0,30];
+
+function startTimer(){
+  barPct=100; won=false;
+  const fill=document.getElementById('barFill');
+  const score=document.getElementById('tapScore');
+  const circle=document.getElementById('tapCircle');
+  fill.style.background='var(--grad)';
+  circle.textContent='🎯'; score.textContent='';
+  fill.style.width='100%';
+  const start=performance.now();
+  timerInterval=setInterval(()=>{
+    const elapsed=performance.now()-start;
+    barPct=Math.max(0,100-elapsed/BAR_DURATION*100);
+    fill.style.width=barPct+'%';
+    if(barPct<=WIN_ZONE[1]) fill.style.background=`linear-gradient(90deg,#80ffb8,#2ab800)`;
+    if(barPct<=0){ stop(); }
+  },40);
+}
+
+function stop(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+  won = (barPct>=WIN_ZONE[0] && barPct<=WIN_ZONE[1]);
+  sesTotal++;
+  if(won) sesSuccess++; else sesFailed++;
+  sendSessionUpdate('No Gift');
+  tapSound();
+  const score=document.getElementById('tapScore');
+  score.textContent=Math.round(barPct)+'%';
+  setTimeout(()=>buildScratch(), 700);
+}
+
+document.getElementById('tapZone').addEventListener('click',()=>{ if(timerInterval) stop(); });
+document.addEventListener('keydown',e=>{ if(e.code==='Space'&&timerInterval){e.preventDefault();stop();} });
+
+// ── Scratch Cards ────────────────────────────────────────────────
+let cards=[], cardsDone=0;
+
+function pickCards(){
+  // shuffle 5 prizes, pick 3, add 1 loser, shuffle all 4
+  const shuffled=[...ALL_PRIZES].sort(()=>Math.random()-.5);
+  const three=shuffled.slice(0,3);
+  const four=[...three,LOSER].sort(()=>Math.random()-.5);
+  return four;
+}
+
+function buildScratch(){
+  cards=pickCards();
+  cardsDone=0;
+  const grid=document.getElementById('cardsGrid');
+  grid.innerHTML='';
+  show('scratch');
+  document.getElementById('scratchSub').textContent='Find your prize hidden under the cards';
+
+  cards.forEach((prize,i)=>{
+    const wrap=document.createElement('div'); wrap.className='card-wrap';
+    const beneath=document.createElement('div');
+    beneath.className='card-prize '+(prize.winner?'win':'lose');
+    beneath.innerHTML=`<div class="card-prize-icon">${prize.icon}</div><div class="card-prize-name">${prize.name.replace('\n','<br>')}</div>`;
+    const result=document.createElement('div'); result.className='card-result'; result.id='cr-'+i;
+    const canvas=document.createElement('canvas'); canvas.className='card-canvas'; canvas.id='cc-'+i;
+    wrap.appendChild(beneath); wrap.appendChild(result); wrap.appendChild(canvas);
+    grid.appendChild(wrap);
+    initCard(canvas, prize, i);
+  });
+}
+
+function initCard(canvas, prize, idx){
+  const wrap=canvas.parentElement;
+  const W=wrap.offsetWidth||160, H=wrap.offsetHeight||160;
+  canvas.width=W; canvas.height=H;
+  const c=canvas.getContext('2d');
+
+  // Overlay gradient
+  const g=c.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#2a0028');g.addColorStop(.5,'#1a0018');g.addColorStop(1,'#0d000d');
+  c.fillStyle=g; c.fillRect(0,0,W,H);
+
+  // Overlay text "B"
+  c.font=`bold ${W*.55}px 'Playfair Display',serif`;
+  c.textAlign='center'; c.textBaseline='middle';
+  c.fillStyle='rgba(233,30,140,0.12)';
+  c.fillText('B',W/2,H/2);
+
+  // Scratch hint
+  c.font=`600 ${W*.1}px 'Poppins',sans-serif`;
+  c.fillStyle='rgba(255,255,255,0.35)';
+  c.fillText('SCRATCH',W/2,H*.82);
+
+  let scratching=false, scratchedPx=0, totalPx=W*H;
+  const revealed={};
+
+  function getPos(e){
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return {x:src.clientX-r.left,y:src.clientY-r.top};
+  }
+
+  function scratch(e){
+    if(!scratching||canvas.classList.contains('scratched'))return;
+    e.preventDefault();
+    const {x,y}=getPos(e);
+    scratchSound();
+    c.globalCompositeOperation='destination-out';
+    c.beginPath(); c.arc(x,y,22,0,Math.PI*2); c.fill();
+
+    const px=c.getImageData(0,0,W,H).data;
+    let erased=0;
+    for(let j=3;j<px.length;j+=4) if(px[j]<128) erased++;
+    if(erased/totalPx>.45 && !revealed[idx]){ revealed[idx]=true; revealChosenCard(prize,idx,canvas); }
+  }
+
+  canvas.addEventListener('mousedown', e=>{scratching=true;scratch(e);});
+  canvas.addEventListener('mousemove', scratch);
+  canvas.addEventListener('mouseup',   ()=>scratching=false);
+  canvas.addEventListener('mouseleave',()=>scratching=false);
+  canvas.addEventListener('touchstart',e=>{scratching=true;scratch(e);},{passive:false});
+  canvas.addEventListener('touchmove', scratch,{passive:false});
+  canvas.addEventListener('touchend',  ()=>scratching=false);
+}
+
+function revealChosenCard(prize, idx, canvas){
+  canvas.classList.add('scratched');
+  const label=document.getElementById('cr-'+idx);
+  if(prize.winner){ label.textContent='YOU WON!'; label.className='card-result show-win'; }
+  else            { label.textContent='NEXT TIME'; label.className='card-result show-lose'; }
+
+  // lock other cards
+  document.querySelectorAll('.card-canvas').forEach((c,i)=>{ if(i!==idx) c.classList.add('scratched'); });
+
+  const pName=prize.name.replace('\n',' ');
+  sendSessionUpdate(prize.winner ? pName : 'No Gift');
+
+  // Claim prize from sheet (reduce qty)
+  if(prize.winner && !SHEET_URL.startsWith('PASTE')){
+    fetch(`${SHEET_URL}?${new URLSearchParams({action:'claimPrize',prizeId:prize.id,phone:sesPhone})}`,{mode:'no-cors'}).catch(()=>{});
+  }
+
+  setTimeout(()=>showResult(prize), 900);
+}
+
+// ── Result ───────────────────────────────────────────────────────
+let resetTimer=null, resetPct=100;
+function showResult(prize){
+  show('result');
+  const emoji=document.getElementById('resultEmoji');
+  const title=document.getElementById('resultTitle');
+  const prizeEl=document.getElementById('resultPrize');
+  const sub=document.getElementById('resultSub');
+
+  if(prize.winner){
+    emoji.textContent=prize.icon;
+    title.textContent='Congratulations!';
+    prizeEl.textContent=prize.name.replace('\n',' ');
+    sub.textContent='Show this screen to our staff to claim your prize!';
+    winSound(); launchConfetti();
+  } else {
+    emoji.textContent='😊';
+    title.textContent='Better Luck Next Time!';
+    prizeEl.textContent='';
+    sub.textContent='Thank you for playing at Beemas. Visit us again for another chance to win!';
+    loseSound();
+  }
+
+  resetPct=100;
+  document.getElementById('progressBar').style.width='100%';
+  const BAR_TIME=8000;
+  const step=100/(BAR_TIME/50);
+  if(resetTimer) clearInterval(resetTimer);
+  resetTimer=setInterval(()=>{
+    resetPct=Math.max(0,resetPct-step);
+    document.getElementById('progressBar').style.width=resetPct+'%';
+    if(resetPct<=0){ clearInterval(resetTimer); resetGame(); }
+  },50);
+}
+
+function resetGame(){
+  if(resetTimer){clearInterval(resetTimer);resetTimer=null;}
+  confettiRunning=false; cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
+  sesTotal=0;sesFailed=0;sesSuccess=0;sesPhone='';sesName='';
+  document.getElementById('nameInput').value='';
+  document.getElementById('phoneInput').value='';
+  document.getElementById('formStatus').textContent='';
+  document.getElementById('restrictMsg').style.display='none';
+  show('register');
+}
+</script>
+</body>
+</html>

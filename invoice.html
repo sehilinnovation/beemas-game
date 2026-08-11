@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice — TechieRat Automation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:#f0f2f5;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;color:#1a1a2e;}
+    .print-bar{width:794px;max-width:100%;display:flex;justify-content:flex-end;margin-bottom:16px;}
+    .print-btn{padding:10px 24px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;letter-spacing:.04em;}
+    .print-btn:hover{background:#1d4ed8;}
+    .invoice{width:794px;max-width:100%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.12);}
+    .inv-header{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:36px 48px 32px;display:flex;justify-content:space-between;align-items:flex-start;}
+    .brand-name{font-size:1.6rem;font-weight:700;letter-spacing:.02em;margin-bottom:6px;}
+    .brand-tag{font-size:.72rem;color:rgba(99,179,237,.8);letter-spacing:.12em;text-transform:uppercase;}
+    .inv-meta{text-align:right;}
+    .inv-label{font-size:2rem;font-weight:700;letter-spacing:.06em;color:#63b3ed;margin-bottom:8px;}
+    .inv-number{font-size:.78rem;color:rgba(255,255,255,.7);letter-spacing:.06em;}
+    .inv-number span{color:#63b3ed;font-weight:600;}
+    .inv-date{font-size:.78rem;color:rgba(255,255,255,.7);letter-spacing:.04em;margin-top:4px;}
+    .inv-date span{color:#fff;font-weight:600;}
+    .inv-body{padding:36px 48px;}
+    .parties{display:flex;justify-content:space-between;margin-bottom:36px;gap:24px;}
+    .party{flex:1;}
+    .party-label{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#718096;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e2e8f0;}
+    .party-name{font-size:1rem;font-weight:700;color:#1a1a2e;margin-bottom:4px;}
+    .party-addr{font-size:.8rem;color:#4a5568;line-height:1.6;}
+    .party-gst{font-size:.75rem;color:#718096;margin-top:6px;}
+    .party-gst strong{color:#1a1a2e;}
+    .status-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+    .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+    .badge-unpaid{background:#fee2e2;color:#991b1b;}
+    .badge-partial{background:#fef3c7;color:#92400e;}
+    .badge-paid{background:#d1fae5;color:#065f46;}
+    .items-table{width:100%;border-collapse:collapse;margin-bottom:28px;}
+    .items-table thead tr{background:#f7fafc;}
+    .items-table th{padding:12px 14px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#718096;text-align:left;border-bottom:2px solid #e2e8f0;}
+    .items-table th.right{text-align:right;}
+    .items-table td{padding:14px 14px;font-size:.85rem;color:#2d3748;border-bottom:1px solid #f0f4f8;vertical-align:top;}
+    .items-table td.right{text-align:right;font-weight:500;}
+    .item-name{font-weight:600;color:#1a1a2e;margin-bottom:2px;}
+    .item-desc{font-size:.75rem;color:#718096;line-height:1.5;}
+    .totals{display:flex;justify-content:flex-end;margin-bottom:32px;}
+    .totals-box{width:300px;}
+    .total-row{display:flex;justify-content:space-between;padding:8px 0;font-size:.85rem;color:#4a5568;border-bottom:1px solid #f0f4f8;}
+    .total-row.subtotal{color:#718096;}
+    .total-row.due{background:linear-gradient(135deg,#0f172a,#1e293b);color:#63b3ed;font-weight:700;font-size:1rem;padding:12px 14px;border-radius:10px;border:none;margin-top:6px;}
+    .divider{height:1px;background:#e2e8f0;margin:28px 0;}
+    .section-title{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#718096;margin-bottom:16px;padding-bottom:6px;border-bottom:2px solid #e2e8f0;}
+    .payment-grid{display:flex;gap:24px;}
+    .pay-block{flex:1;background:#f7fafc;border-radius:10px;padding:16px 18px;border:1px solid #e2e8f0;}
+    .pay-block-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#718096;margin-bottom:10px;}
+    .pay-row{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px;}
+    .pay-row .lbl{color:#718096;}.pay-row .val{color:#1a1a2e;font-weight:600;font-family:'Courier New',monospace;}
+    .upi-block{flex:1;background:#f7fafc;border-radius:10px;padding:16px 18px;border:1px solid #e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+    .upi-label{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#718096;margin-bottom:8px;}
+    .upi-id{font-size:1.1rem;font-weight:700;color:#1a1a2e;font-family:'Courier New',monospace;letter-spacing:.04em;}
+    .upi-note{font-size:.7rem;color:#718096;margin-top:6px;}
+    .inv-footer{background:linear-gradient(135deg,#0f172a,#1e293b);padding:20px 48px;display:flex;justify-content:space-between;align-items:center;}
+    .footer-note{font-size:.72rem;color:rgba(255,255,255,.7);line-height:1.6;}
+    .footer-note strong{color:#63b3ed;}
+    .footer-thanks{font-size:.78rem;font-weight:700;color:#63b3ed;letter-spacing:.04em;}
+    @page{size:794px 1123px;margin:0;}
+    @media print{*{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}body{background:none !important;padding:0 !important;display:block !important;}.print-bar{display:none !important;}.invoice{border-radius:0 !important;box-shadow:none !important;width:794px !important;}}
+  </style>
+</head>
+<body>
+  <div class="print-bar">
+    <button class="print-btn" onclick="window.print()">⬇ Download PDF</button>
+  </div>
+
+  <div class="invoice">
+    <div class="inv-header">
+      <div>
+        <div class="brand-name">TechieRat Automation</div>
+        <div class="brand-tag">Software &amp; Automation Solutions</div>
+      </div>
+      <div class="inv-meta">
+        <div class="inv-label">INVOICE</div>
+        <div class="inv-number">Invoice No: <span>#TRA-2026-012</span></div>
+        <div class="inv-date">Date: <span id="inv-date"></span></div>
+      </div>
+    </div>
+
+    <div class="inv-body">
+      <div class="parties">
+        <div class="party">
+          <div class="party-label">Bill To</div>
+          <div class="party-name">Beemas</div>
+          <div class="party-addr">
+            Opposite MRO Office, Kavali<br>
+            Nellore District<br>
+            Andhra Pradesh — 524201
+          </div>
+        </div>
+        <div class="party">
+          <div class="party-label">From</div>
+          <div class="party-name">TechieRat Automation</div>
+          <div class="party-addr">
+            132 Vijaya Vihaan Illam Compound<br>
+            Uthukuli 638751, Erode District<br>
+            Tamil Nadu, India<br>
+            +91 9605371435
+          </div>
+          <div class="party-gst">GST: <strong>33AGFPY2682K1ZW</strong></div>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span class="badge badge-unpaid">Payment Pending</span>
+        <span style="font-size:.78rem;color:#718096;">No advance received</span>
+      </div>
+
+      <table class="items-table">
+        <thead>
+          <tr><th>#</th><th>Description</th><th class="right">Amount</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="width:36px;color:#718096;">01</td>
+            <td>
+              <div class="item-name">Basic Spin &amp; Win App — Web App</div>
+              <div class="item-desc">
+                Custom-built browser-based game for customer engagement.<br>
+                Includes: registration screen, reflex timer game, animated scratch cards,<br>
+                Google Sheets backend, QR code poster, and GitHub Pages hosting.
+              </div>
+            </td>
+            <td class="right">₹2,000</td>
+          </tr>
+          <tr>
+            <td style="width:36px;color:#718096;">02</td>
+            <td>
+              <div class="item-name">Extra Customisation Package</div>
+              <div class="item-desc">
+                Advanced features on top of the basic app:<br>
+                • Playing restriction (one play per phone number)<br>
+                • Extra column tracking: number of attempts per player<br>
+                • Winning number tracking in Google Sheets<br>
+                • Failure number tracking in Google Sheets<br>
+                • Additional custom configurations as discussed
+              </div>
+            </td>
+            <td class="right">₹2,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div class="totals-box">
+          <div class="total-row subtotal"><span>Subtotal</span><span>₹4,000.00</span></div>
+          <div class="total-row subtotal"><span>GST (0%)</span><span>₹0.00</span></div>
+          <div class="total-row due"><span>Total Due</span><span>₹4,000.00</span></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Payment Details</div>
+      <div class="payment-grid">
+        <div class="pay-block">
+          <div class="pay-block-title">Bank Transfer</div>
+          <div class="pay-row"><span class="lbl">Bank</span><span class="val">ICICI Bank</span></div>
+          <div class="pay-row"><span class="lbl">Account Name</span><span class="val">MOHAMMED SEHIL E</span></div>
+          <div class="pay-row"><span class="lbl">Account No.</span><span class="val">022201002974</span></div>
+          <div class="pay-row"><span class="lbl">IFSC Code</span><span class="val">ICIC0000222</span></div>
+        </div>
+        <div class="upi-block">
+          <div class="upi-label">Pay via UPI</div>
+          <div class="upi-id">sehil@icici</div>
+          <div class="upi-note">Google Pay · PhonePe · Paytm · Any UPI app</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-footer">
+      <div class="footer-note">
+        Thank you for choosing TechieRat Automation.<br>
+        Please transfer the full amount of <strong>₹4,000</strong> at your earliest convenience.
+      </div>
+      <div class="footer-thanks">TechieRat Automation</div>
+    </div>
+  </div>
+
+  <script>
+    const d = new Date();
+    document.getElementById('inv-date').textContent =
+      d.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  </script>
+</body>
+</html>
