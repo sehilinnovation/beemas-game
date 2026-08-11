@@ -418,6 +418,7 @@
     const LOSER = {icon:'😊', name:'Better Luck\nNext Time!', winner:false};
 
     let sesTotal=0, sesFailed=0, sesSuccess=0, sesPhone='', sesName='';
+    let maxAttempts=0;
     async function sendSessionUpdate(prize) {
       if (!sesPhone) return;
       try {
@@ -453,6 +454,13 @@
         }
       } catch(_) {}
       sesPhone = phone; sesName = name; sesTotal = 0; sesFailed = 0; sesSuccess = 0;
+      tries = 0; bestDiff = Infinity;
+      maxAttempts = 0;
+      try {
+        const sr = await fetch(`${SHEET_URL}?action=getSettings`);
+        const sd = await sr.json();
+        maxAttempts = parseInt(sd.play_restriction) || 0;
+      } catch(_) {}
       showStatus('', ''); switchToGame();
     });
     document.getElementById('inp-phone').addEventListener('keydown', e => { if (e.key==='Enter') submitBtn.click(); });
@@ -505,15 +513,17 @@
       const elapsed=(forced!==undefined)?forced:Date.now()-startTime;
       const diff=Math.abs(elapsed-targetMs);
       const won=Math.floor(elapsed/10)===Math.floor(targetMs/10);
-      tries++; tryCount.textContent=tries;
+      tries++; tryCount.textContent=maxAttempts>0 ? tries+' / '+maxAttempts : tries;
       if(diff<bestDiff){bestDiff=diff; bestVal.textContent=diff+'ms'; bestLabel.style.display='';}
       const h=Math.floor(elapsed/10); timerSec.textContent=pad(Math.floor(h/100)); timerHun.textContent=pad(h%100);
       timerWrap.classList.remove('running'); timerDisplay.className='timer-display '+(won?'won':'lost');
       mainBtn.disabled=true; mainBtn.className=''; mainBtn.textContent=won?'🏆 WINNER!':'✕ MISSED';
       sesTotal++; if(won) sesSuccess++; else sesFailed++;
       sendSessionUpdate('No Gift');
-      stopTicking(); playClick(); showResult(won,elapsed,diff); addHistory(won,elapsed,diff);
-      if(won){confettiAnim(); setTimeout(playWin,80);} else setTimeout(playMiss,80);
+      stopTicking(); playClick(); addHistory(won,elapsed,diff);
+      if(won){ confettiAnim(); setTimeout(playWin,80); showResult(won,elapsed,diff); }
+      else if(maxAttempts>0 && tries>=maxAttempts){ setTimeout(playMiss,80); showExhausted(); }
+      else { setTimeout(playMiss,80); showResult(won,elapsed,diff); }
     }
 
     mainBtn.addEventListener('click', () => running ? stop() : start());
@@ -530,6 +540,30 @@
       autoResetBar.classList.remove('running'); autoResetBar.style.animationDuration=(delay/1000)+'s';
       void autoResetBar.offsetWidth; autoResetBar.classList.add('running');
       setTimeout(won?showScratchScreen:resetTimer, delay);
+    }
+
+    function showExhausted() {
+      resultCard.className='result-card lose';
+      resultIcon.textContent='😊'; resultTitle.textContent='ATTEMPTS OVER!';
+      resultSub.innerHTML=`You've used all <strong>${maxAttempts}</strong> ${maxAttempts===1?'attempt':'attempts'} for this session.<br>Thank you for visiting Beemas! Come back and play again next visit.`;
+      diffNote.textContent=''; diffBar.style.width='0%';
+      autoResetLabel.textContent='Returning to home screen…';
+      autoResetBar.classList.remove('running'); autoResetBar.style.animationDuration='3s';
+      void autoResetBar.offsetWidth; autoResetBar.classList.add('running');
+      setTimeout(resetToHome, 3000);
+    }
+
+    function resetToHome() {
+      const g=$('gameScreen'), r=$('regScreen');
+      g.classList.add('fade-out');
+      setTimeout(()=>{
+        g.classList.remove('active','fade-out'); r.classList.add('active','fade-in');
+        setTimeout(()=>r.classList.remove('fade-in'),500);
+        tries=0; bestDiff=Infinity; historyList.innerHTML=''; historyWrap.style.display='none';
+        resultCard.className='result-card'; maxAttempts=0; tryCount.textContent='0'; bestLabel.style.display='none';
+        document.getElementById('inp-name').value=''; document.getElementById('inp-phone').value='';
+        submitBtn.disabled=false; showStatus('',''); restrictBox.style.display='none';
+      },450);
     }
 
     function addHistory(won,elapsed,diff) {

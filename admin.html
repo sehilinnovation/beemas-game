@@ -221,6 +221,20 @@
       }catch(e){document.getElementById('savestatus-'+i).textContent='Error saving.';}
     }
 
+    // ── Date/Time formatters ──────────────────────────────────
+    function fmtDate(v) {
+      if(!v) return '—';
+      const s=String(v), m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m){const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${m[3]} ${mo[+m[2]-1]} ${m[1]}`;}
+      return s;
+    }
+    function fmtTime(v) {
+      if(!v) return '—';
+      const s=String(v), m=s.match(/T(\d{2}):(\d{2})/);
+      if(m){let h=+m[1];const mn=m[2],p=h>=12?'pm':'am';h=h%12||12;return `${h}:${mn} ${p}`;}
+      return s;
+    }
+
     // ── Players ───────────────────────────────────────────────
     async function loadPlayers(){
       const el=document.getElementById('playersContent');
@@ -241,7 +255,7 @@
               const prize=p[8]||'No Gift', isWin=prize!=='No Gift';
               return `<tr>
                 <td class="num-cell">${i+1}</td>
-                <td>${p[1]||'—'}</td><td>${p[2]||'—'}</td>
+                <td>${fmtDate(p[1])}</td><td>${fmtTime(p[2])}</td>
                 <td style="font-weight:600">${p[3]||'—'}</td>
                 <td>${p[4]||'—'}</td>
                 <td class="num-cell"><span class="badge-att">${p[5]||0}</span></td>
