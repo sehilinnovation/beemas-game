@@ -2,497 +2,642 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>Beemas — Spin & Win</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <title>Beemas — Scratch &amp; Win!</title>
   <style>
-    :root{
-      --pk:#e91e8c;--pk2:#ff4d9e;--ora:#ff7c2a;
-      --grad:linear-gradient(135deg,#e91e8c,#ff7c2a);
-      --glow:rgba(233,30,140,.45);
-      --bg:#08000d;--card:#120010;--border:#2a0020;
-      --text:#fff0f8;--muted:#a06080;--green:#80ffb8;--red:#ff6b6b;
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Raleway:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --pk:   #e91e8c;
+      --pk2:  #ff4d9e;
+      --ora:  #ff7c2a;
+      --glow: rgba(233,30,140,0.45);
+      --bg:   #08000d;
+      --card: #120010;
+      --border:#2a0020;
+      --text: #fff0f8;
+      --muted:#a06080;
+      --green:#80ffb8;
       --radius:14px;
     }
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-    html,body{height:100%;overflow:hidden;background:var(--bg);}
-    body{font-family:'Poppins',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;}
 
-    /* ─── Particles ──────────────────────────── */
-    #particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-    .dot{position:absolute;border-radius:50%;animation:float linear infinite;opacity:.18;}
-    @keyframes float{0%{transform:translateY(100vh) scale(0);}100%{transform:translateY(-120px) scale(1);}}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ─── Screens ────────────────────────────── */
-    .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:10;transition:opacity .35s,transform .35s;}
-    .screen.hidden{opacity:0;pointer-events:none;transform:scale(.97);}
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 0%,  rgba(233,30,140,.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(255,124,42,.05) 0%, transparent 50%);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 16px calc(60px + env(safe-area-inset-bottom, 0px));
+    }
 
-    /* ─── Logo ───────────────────────────────── */
-    .logo-wrap{margin-bottom:18px;text-align:center;}
-    .logo-wrap img{height:68px;object-fit:contain;filter:drop-shadow(0 0 18px var(--glow));}
-    .logo-fallback{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .top-stripe {
+      width: 100%; height: 5px;
+      background: linear-gradient(90deg, transparent, var(--pk), var(--ora), var(--pk), transparent);
+      margin-bottom: 28px;
+      box-shadow: 0 0 16px var(--glow);
+    }
 
-    /* ─── Card shell ─────────────────────────── */
-    .glass{background:var(--card);border:1px solid rgba(233,30,140,.15);border-top:3px solid var(--pk);border-radius:var(--radius);padding:26px 22px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);}
+    .logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 4px; }
+    .logo-img  { height: 72px; object-fit: contain; filter: drop-shadow(0 0 14px var(--glow)); }
+    .logo-fallback {
+      width: 80px; height: 80px; border: 2px solid var(--pk2); border-radius: 50%;
+      background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
+    }
 
-    /* ─── Register ───────────────────────────── */
-    .tagline{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;text-align:center;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;line-height:1.4;}
-    .form-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);display:block;margin-bottom:6px;}
-    .form-input{width:100%;background:#08000d;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Poppins',sans-serif;font-size:.95rem;padding:13px 16px;outline:none;transition:border-color .2s;margin-bottom:14px;}
-    .form-input:focus{border-color:var(--pk);}
-    .btn-primary{width:100%;padding:15px;border:none;border-radius:var(--radius);background:var(--grad);color:#fff;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:.04em;cursor:pointer;box-shadow:0 6px 28px var(--glow);transition:transform .08s,box-shadow .15s;}
-    .btn-primary:active{transform:scale(.97);box-shadow:0 3px 14px var(--glow);}
-    .form-status{font-size:.75rem;color:var(--red);min-height:18px;margin-top:6px;text-align:center;}
-    .restrict-msg{background:rgba(233,30,140,.1);border:1px solid rgba(233,30,140,.3);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--pk2);text-align:center;line-height:1.5;margin-top:6px;display:none;}
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 900; letter-spacing: .04em; text-align: center; line-height: 1;
+      background: linear-gradient(135deg, #fff0f8 0%, var(--pk2) 50%, var(--pk) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-top: 10px;
+    }
+    .brand-sub {
+      font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--pk2); margin-top: 4px; margin-bottom: 6px; opacity: .8;
+    }
+    .brand-address { margin-bottom: 22px; }
+    .brand-address span {
+      display: inline-block;
+      background: rgba(233,30,140,.07); border: 1px solid rgba(233,30,140,.2);
+      border-radius: 20px; padding: 3px 12px;
+      font-size: .66rem; color: var(--pk2); font-weight: 600; letter-spacing: .03em;
+    }
 
-    /* ─── Instruction ────────────────────────── */
-    #instructScreen .glass{text-align:center;}
-    .inst-icon{font-size:2.8rem;margin-bottom:10px;}
-    .inst-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-    .inst-sub{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+    .divider {
+      width: 100%; max-width: 480px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--pk), var(--pk2), transparent);
+      margin-bottom: 16px; opacity: .3;
+    }
 
-    /* ─── Timer ──────────────────────────────── */
-    #timerScreen{background:var(--bg);}
-    .timer-top{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-    .timer-logo img{height:38px;object-fit:contain;}
-    .timer-logo span{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .bar-wrap{width:100%;max-width:380px;height:10px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:28px;}
-    .bar-fill{height:100%;width:100%;background:var(--grad);border-radius:100px;transition:width .05s linear;box-shadow:0 0 12px var(--glow);}
-    .tap-zone{width:100%;max-width:380px;text-align:center;cursor:pointer;user-select:none;}
-    .tap-circle{width:200px;height:200px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;background:radial-gradient(circle at 40% 35%,rgba(233,30,140,.25),transparent 70%);border:2px solid rgba(233,30,140,.3);transition:transform .08s,box-shadow .1s;box-shadow:0 0 40px rgba(233,30,140,.2);}
-    .tap-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(233,30,140,.15);animation:pulse-ring 1.8s ease-in-out infinite;}
-    @keyframes pulse-ring{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.06);opacity:.15;}}
-    .tap-circle:active{transform:scale(.94);box-shadow:0 0 60px rgba(233,30,140,.5);}
-    .tap-hint{font-size:.78rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
-    .tap-score{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:900;margin-bottom:4px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-height:56px;}
-    .tap-score-label{font-size:.62rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;}
+    /* ── Target card ─────────────────────────── */
+    .target-card {
+      width: 100%; max-width: 480px;
+      background: linear-gradient(135deg, #1a0014, #0d000a);
+      border: 1px solid rgba(233,30,140,.15);
+      border-top: 3px solid var(--pk2);
+      border-radius: var(--radius);
+      padding: 24px 24px 20px; text-align: center; margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+    }
+    .target-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .2em; color: var(--muted); margin-bottom: 10px; }
+    .target-time {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 3.8rem; letter-spacing: .08em; line-height: 1;
+      color: var(--pk2); text-shadow: 0 0 18px var(--glow); margin-bottom: 10px;
+    }
+    .target-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      background: rgba(233,30,140,.07); border: 1px solid rgba(233,30,140,.18);
+      border-radius: 100px; padding: 4px 12px; font-size: .7rem; color: var(--text); letter-spacing: .05em;
+    }
+    .badge.gold { border-color: var(--pk2); color: var(--pk2); }
 
-    /* ─── Scratch screen ─────────────────────── */
-    #scratchScreen{background:var(--bg);}
-    .scratch-top{text-align:center;margin-bottom:18px;}
-    .scratch-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
-    .scratch-sub{font-size:.72rem;color:var(--muted);}
-    .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:360px;margin:0 auto;}
-    .card-wrap{position:relative;width:100%;padding-bottom:100%;border-radius:var(--radius);overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.5);}
-    .card-prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:var(--radius);}
-    .card-prize.win{background:radial-gradient(135deg at 30% 30%,#1a0014,#08000d);}
-    .card-prize.lose{background:radial-gradient(135deg at 30% 30%,#0a0a0a,#050505);}
-    .card-prize-icon{font-size:2.1rem;line-height:1;}
-    .card-prize-name{font-family:'Playfair Display',serif;font-size:.68rem;font-weight:700;text-align:center;padding:0 6px;line-height:1.3;color:var(--pk2);}
-    .card-prize.lose .card-prize-name{color:var(--muted);}
-    .card-canvas{position:absolute;inset:0;border-radius:var(--radius);cursor:pointer;}
-    .card-canvas.scratched{pointer-events:none;}
-    .card-result{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .4s;}
-    .card-result.show-win{opacity:1;color:var(--green);}
-    .card-result.show-lose{opacity:1;color:var(--muted);}
+    .tries-row { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: .78rem; color: var(--muted); }
+    .tries-row strong { color: var(--text); }
 
-    /* ─── Result ─────────────────────────────── */
-    #resultScreen{background:var(--bg);}
-    #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:5;}
-    .result-box{text-align:center;}
-    .result-emoji{font-size:3.5rem;margin-bottom:10px;display:block;}
-    .result-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
-    .result-prize{font-size:1rem;font-weight:600;color:var(--pk2);margin-bottom:6px;}
-    .result-sub{font-size:.75rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
-    .progress-wrap{width:100%;background:var(--border);border-radius:100px;height:6px;overflow:hidden;margin-bottom:14px;}
-    .progress-bar{height:100%;background:var(--grad);border-radius:100px;transition:width .05s linear;}
-    .result-btn{width:100%;padding:14px;border:1px solid rgba(233,30,140,.25);border-radius:var(--radius);background:transparent;color:var(--pk2);font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s;}
-    .result-btn:hover{background:rgba(233,30,140,.08);}
+    /* ── Timer ───────────────────────────────── */
+    .timer-wrap {
+      width: 100%; max-width: 480px;
+      background: var(--card); border: 1px solid var(--border);
+      border-top: 3px solid var(--pk);
+      border-radius: var(--radius);
+      padding: 28px 20px; text-align: center; margin-bottom: 22px;
+      box-shadow: 0 2px 20px rgba(0,0,0,.4); transition: box-shadow .3s;
+    }
+    .timer-wrap.running { border-color: var(--pk2); box-shadow: 0 4px 30px rgba(233,30,140,.12); }
+    .timer-display {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 5.5rem; letter-spacing: .06em; line-height: 1;
+      color: var(--muted); font-variant-numeric: tabular-nums; transition: color .15s;
+    }
+    .timer-display.running { color: var(--text); }
+    .timer-display.won     { color: var(--green); text-shadow: 0 0 24px rgba(128,255,184,.4); }
+    .timer-display.lost    { color: var(--pk2); text-shadow: 0 0 20px var(--glow); }
+    .timer-sep { display: inline-block; color: var(--pk2); opacity: .5; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:.5}50%{opacity:.1} }
+    .timer-display.running .timer-sep { animation: none; opacity: .8; }
+    .timer-unit { font-size: .62rem; letter-spacing: .2em; color: var(--muted); margin-top: 6px; text-transform: uppercase; }
 
-    /* ─── Confetti ───────────────────────────── */
-    #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:5;}
+    /* ── Main button ─────────────────────────── */
+    .btn-wrap { width: 100%; max-width: 480px; margin-bottom: 22px; }
+    #mainBtn {
+      width: 100%; padding: 20px; border: none; border-radius: var(--radius);
+      font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; letter-spacing: .06em;
+      cursor: pointer; transition: transform .08s; outline: none;
+    }
+    #mainBtn.state-start {
+      background: linear-gradient(135deg, var(--pk2), var(--pk));
+      color: #fff; box-shadow: 0 6px 28px var(--glow), inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    #mainBtn.state-stop {
+      background: linear-gradient(135deg, #ff80c0, var(--pk));
+      color: #fff; box-shadow: 0 6px 32px rgba(233,30,140,.6);
+      animation: stopPulse .8s ease-in-out infinite;
+    }
+    @keyframes stopPulse { 0%,100%{box-shadow:0 4px 20px rgba(233,30,140,.3);}50%{box-shadow:0 6px 40px rgba(233,30,140,.7);} }
+    #mainBtn:active   { transform: scale(.975); }
+    #mainBtn:disabled { background: var(--border); color: var(--muted); box-shadow: none; cursor: default; animation: none; }
+
+    /* ── Result card ─────────────────────────── */
+    .result-card {
+      width: 100%; max-width: 480px; border-radius: var(--radius);
+      padding: 26px 24px; margin-bottom: 22px; text-align: center; display: none; animation: slideUp .3s ease;
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+    .result-card.win  { background: linear-gradient(135deg, #160011, #0d000a); border: 1px solid rgba(233,30,140,.3); border-top: 3px solid var(--green); display: block; }
+    .result-card.lose { background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--pk); display: block; }
+    .result-icon  { font-size: 2.8rem; margin-bottom: 8px; }
+    .result-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; letter-spacing: .04em; margin-bottom: 8px; }
+    .result-card.win  .result-title { color: var(--green); }
+    .result-card.lose .result-title { color: var(--pk2); }
+    .result-sub { font-size: .88rem; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+    .result-sub strong { color: var(--text); }
+    .accuracy-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); text-align: left; margin-bottom: 6px; }
+    .diff-bar-track { background: var(--border); border-radius: 100px; height: 8px; margin-bottom: 6px; overflow: hidden; }
+    .diff-bar { height: 100%; border-radius: 100px; transition: width .7s cubic-bezier(.22,.68,0,1.2); width: 0%; }
+    .result-card.win  .diff-bar { background: linear-gradient(90deg, var(--pk), var(--green)); }
+    .result-card.lose .diff-bar { background: linear-gradient(90deg, #2a0020, var(--pk2)); }
+    .diff-note { font-size: .7rem; color: var(--muted); text-align: right; margin-bottom: 20px; }
+    .auto-reset-wrap { margin-top: 4px; }
+    .auto-reset-bar { height: 3px; background: var(--pk2); border-radius: 100px; width: 100%; }
+    .auto-reset-bar.running { animation: shrink 3s linear forwards; }
+    @keyframes shrink { from{width:100%}to{width:0%} }
+    .auto-reset-label { font-size: .66rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; margin-top: 6px; }
+
+    /* ── History ─────────────────────────────── */
+    .history-wrap { width: 100%; max-width: 480px; }
+    .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .section-head-line { flex: 1; height: 1px; background: var(--border); }
+    .section-head-text { font-size: .62rem; text-transform: uppercase; letter-spacing: .2em; color: var(--muted); white-space: nowrap; }
+    .history-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .history-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; font-size: .82rem; animation: slideUp .3s ease; }
+    .history-item .h-num  { color: var(--muted); width: 22px; flex-shrink: 0; }
+    .history-item .h-time { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; flex: 1; padding-left: 8px; }
+    .history-item .h-diff { color: var(--muted); font-size: .78rem; }
+    .history-item .h-res  { font-weight: 700; letter-spacing: .05em; margin-left: 12px; min-width: 44px; text-align: right; }
+    .history-item.h-win  .h-res { color: var(--green); }
+    .history-item.h-lose .h-res { color: var(--pk2); }
+
+    /* ── Registration ────────────────────────── */
+    .screen { display: none; width: 100%; }
+    .screen.active { display: flex; flex-direction: column; align-items: center; }
+    .reg-card {
+      width: 100%; max-width: 480px;
+      background: var(--card); border: 1px solid rgba(233,30,140,.12); border-top: 3px solid var(--pk2);
+      border-radius: var(--radius); padding: 28px 24px 24px; margin-bottom: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+    .reg-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .reg-sub { font-size: .76rem; color: var(--muted); margin-bottom: 22px; line-height: 1.5; }
+    .form-group  { margin-bottom: 16px; }
+    .form-label  { display: block; font-size: .66rem; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); margin-bottom: 7px; }
+    .form-input  {
+      width: 100%; background: #08000d; border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'Raleway', sans-serif; font-size: 1rem; font-weight: 600;
+      padding: 13px 16px; outline: none; transition: border-color .2s;
+    }
+    .form-input:focus { border-color: var(--pk2); }
+    .form-input::placeholder { color: var(--border); }
+    .btn-submit {
+      width: 100%; padding: 18px; border: none; border-radius: var(--radius);
+      font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; letter-spacing: .04em;
+      cursor: pointer; background: linear-gradient(135deg, var(--pk2), var(--pk));
+      color: #fff; box-shadow: 0 6px 24px var(--glow); margin-top: 8px; transition: transform .08s;
+    }
+    .btn-submit:active   { transform: scale(.97); }
+    .btn-submit:disabled { background: var(--border); color: var(--muted); box-shadow: none; cursor: default; }
+    .submit-status { text-align: center; font-size: .8rem; color: var(--muted); margin-top: 10px; min-height: 18px; }
+    .submit-status.error { color: #ff8888; }
+    .restrict-box {
+      background: rgba(233,30,140,.08); border: 1px solid rgba(233,30,140,.25);
+      border-radius: 10px; padding: 12px 14px; font-size: .8rem; color: var(--pk2);
+      line-height: 1.5; margin-top: 8px; display: none; text-align: center;
+    }
+
+    .fade-out { animation: fadeOut .45s ease forwards; }
+    .fade-in  { animation: fadeIn  .45s ease forwards; }
+    @keyframes fadeOut { to  {opacity:0;transform:translateY(-10px)} }
+    @keyframes fadeIn  { from{opacity:0;transform:translateY(10px)}  }
+
+    /* ── Scratch screen ───────────────────────── */
+    .scratch-header { width: 100%; max-width: 480px; text-align: center; margin-bottom: 18px; }
+    .scratch-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--pk2); text-shadow: 0 0 20px var(--glow); margin-bottom: 4px; }
+    .scratch-sub { font-size: .82rem; color: var(--muted); }
+
+    .cards-grid { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    .card-item {
+      position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 3/2;
+      cursor: pointer; background: var(--card); border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,.5); transition: transform .15s;
+    }
+    .card-item:not(.scratched):hover { transform: scale(1.03); }
+    .card-item.scratched { cursor: default; }
+    .card-prize {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 8px;
+      background: linear-gradient(135deg, #1a0014, #0d000a); text-align: center;
+    }
+    .card-prize.is-loser { background: linear-gradient(135deg, #0d000d, #060006); }
+    .card-prize-icon { font-size: 1.7rem; line-height: 1; margin-bottom: 3px; }
+    .card-prize-name { font-size: .68rem; font-weight: 700; color: var(--pk2); letter-spacing: .04em; line-height: 1.25; }
+    .card-prize.is-loser .card-prize-name { color: var(--muted); }
+    .card-prize.is-loser .card-prize-icon { opacity: .45; }
+    .card-num { position: absolute; top: 5px; left: 7px; font-family: 'Playfair Display', serif; font-size: .62rem; font-weight: 700; color: var(--muted); pointer-events: none; z-index: 2; }
+    .card-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; border-radius: 12px; transition: opacity .35s; }
+    .card-canvas.fading { opacity: 0; }
+
+    .prize-banner {
+      width: 100%; max-width: 480px;
+      background: linear-gradient(135deg, #1a0014, #0d000a);
+      border: 1px solid rgba(233,30,140,.3); border-top: 3px solid var(--pk2);
+      border-radius: var(--radius); padding: 20px 20px 16px;
+      text-align: center; display: none; animation: slideUp .4s ease; margin-bottom: 20px;
+      box-shadow: 0 4px 30px rgba(233,30,140,.1);
+    }
+    .prize-banner.visible { display: block; }
+    .prize-banner.is-loser { background: var(--card); border-color: var(--border); border-top-color: var(--muted); }
+    .prize-banner-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .2em; color: var(--pk2); margin-bottom: 8px; }
+    .prize-banner-icon  { font-size: 3rem; line-height: 1; margin-bottom: 6px; }
+    .prize-banner-name  { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--pk2); text-shadow: 0 0 16px var(--glow); margin-bottom: 6px; }
+    .prize-banner.is-loser .prize-banner-name { color: var(--muted); font-size: 1rem; font-family: 'Raleway', sans-serif; font-weight: 700; }
+    .prize-banner.is-loser .prize-banner-icon { opacity: .45; }
+    .prize-banner-claim { font-size: .76rem; color: var(--muted); line-height: 1.5; }
+
+    #playAgainBtn {
+      width: 100%; max-width: 480px; padding: 18px; border: none; border-radius: var(--radius);
+      font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; letter-spacing: .04em;
+      cursor: pointer; background: linear-gradient(135deg, var(--pk2), var(--pk));
+      color: #fff; box-shadow: 0 6px 24px var(--glow); margin-bottom: 20px; transition: transform .08s; display: none;
+    }
+    #playAgainBtn:active  { transform: scale(.97); }
+    #playAgainBtn.visible { display: block; }
+
+    #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+    footer { margin-top: 40px; font-size: .62rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; text-align: center; }
   </style>
 </head>
 <body>
+  <canvas id="confetti"></canvas>
 
-<!-- Particles -->
-<div id="particles"></div>
-<canvas id="confettiCanvas"></canvas>
-
-<!-- ① Registration -->
-<div class="screen" id="registerScreen">
-  <div class="logo-wrap">
-    <img src="logo.png" alt="Beemas" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
-    <div class="logo-fallback" style="display:none">Beemas</div>
-  </div>
-  <div class="glass">
-    <div class="tagline">Scratch &amp; Win Exciting Prizes!</div>
-    <label class="form-label">Your Name</label>
-    <input class="form-input" id="nameInput" type="text" placeholder="Enter your name" autocomplete="off"/>
-    <label class="form-label">Phone Number</label>
-    <input class="form-input" id="phoneInput" type="tel" placeholder="+91 98765 43210" autocomplete="off"/>
-    <button class="btn-primary" id="submitBtn">LET'S PLAY</button>
-    <div class="form-status" id="formStatus"></div>
-    <div class="restrict-msg" id="restrictMsg"></div>
-  </div>
-</div>
-
-<!-- ② Instruction -->
-<div class="screen hidden" id="instructScreen">
-  <div class="glass">
-    <div class="inst-icon">⚡</div>
-    <div class="inst-title">Tap at the Right Moment!</div>
-    <div class="inst-sub">Watch the bar shrink to the <strong>green zone</strong> and tap at the perfect moment to win a big prize.<br><br>The better your timing — the better your reward!</div>
-    <button class="btn-primary" id="startBtn">START NOW</button>
-  </div>
-</div>
-
-<!-- ③ Timer Game -->
-<div class="screen hidden" id="timerScreen">
-  <div class="timer-top">
-    <div class="timer-logo">
-      <img src="logo.png" alt="B" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
-      <span style="display:none">Beemas</span>
+  <!-- SCREEN 1 — REGISTRATION -->
+  <div class="screen active" id="regScreen">
+    <div class="top-stripe"></div>
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Beemas"
+        onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex';"/>
+      <div class="logo-fallback" id="logoFb" style="display:none">🍽️</div>
     </div>
+    <div class="brand-name">Beemas</div>
+    <div class="brand-sub">Kavali · Nellore District · AP</div>
+    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
+    <div class="divider"></div>
+
+    <div class="reg-card">
+      <div class="reg-title">Enter Your Details</div>
+      <div class="reg-sub">Fill in your info to play. Stop the timer at the right moment and win Ice Cream, Burger, Pizza, Biryani or Badam Milk!</div>
+      <div class="form-group">
+        <label class="form-label" for="inp-name">Full Name</label>
+        <input class="form-input" id="inp-name" type="text" placeholder="Your name" autocomplete="name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-phone">Phone Number</label>
+        <input class="form-input" id="inp-phone" type="tel" placeholder="e.g. 9876543210" autocomplete="tel" inputmode="numeric" maxlength="10"/>
+      </div>
+      <button class="btn-submit" id="submitBtn">LET'S PLAY ▶</button>
+      <div class="submit-status" id="submitStatus"></div>
+      <div class="restrict-box" id="restrictBox"></div>
+    </div>
+    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
   </div>
-  <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
-  <div class="tap-zone" id="tapZone">
-    <div class="tap-score" id="tapScore"></div>
-    <div class="tap-score-label">Score</div>
-    <div class="tap-circle" id="tapCircle">🎯</div>
-    <div class="tap-hint">Tap to Stop!</div>
+
+  <!-- SCREEN 2 — GAME -->
+  <div class="screen" id="gameScreen">
+    <div class="top-stripe"></div>
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Beemas" onerror="this.style.display='none';"/>
+    </div>
+    <div class="brand-name">Beemas</div>
+    <div class="brand-sub">Kavali · Nellore District · AP</div>
+    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
+    <div class="divider"></div>
+
+    <div class="target-card">
+      <div class="target-label">▶ Stop the timer at exactly</div>
+      <div class="target-time" id="targetDisplay">--:--</div>
+      <div class="target-badges">
+        <span class="badge">seconds : hundredths</span>
+        <span class="badge gold">Exact match to win</span>
+      </div>
+    </div>
+
+    <div class="tries-row" style="max-width:480px;width:100%;">
+      <span>Attempts: <strong id="tryCount">0</strong></span>
+      <span id="bestLabel" style="display:none">Best: <strong id="bestVal">—</strong></span>
+    </div>
+
+    <div class="timer-wrap" id="timerWrap">
+      <div class="timer-display" id="timerDisplay">
+        <span id="timerSec">00</span><span class="timer-sep">:</span><span id="timerHun">00</span>
+      </div>
+      <div class="timer-unit">sec &nbsp;:&nbsp; 1/100s</div>
+    </div>
+
+    <div class="btn-wrap">
+      <button id="mainBtn" class="state-start">▶  START CHALLENGE</button>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-icon"  id="resultIcon"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-sub"   id="resultSub"></div>
+      <div class="accuracy-label">Accuracy</div>
+      <div class="diff-bar-track"><div class="diff-bar" id="diffBar"></div></div>
+      <div class="diff-note" id="diffNote"></div>
+      <div class="auto-reset-wrap">
+        <div class="auto-reset-bar" id="autoResetBar"></div>
+        <div class="auto-reset-label" id="autoResetLabel">Resetting...</div>
+      </div>
+    </div>
+
+    <div class="history-wrap" id="historyWrap" style="display:none">
+      <div class="section-head">
+        <div class="section-head-line"></div>
+        <div class="section-head-text">Attempt History</div>
+        <div class="section-head-line"></div>
+      </div>
+      <ul class="history-list" id="historyList"></ul>
+    </div>
+
+    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
   </div>
-</div>
 
-<!-- ④ Scratch Cards -->
-<div class="screen hidden" id="scratchScreen">
-  <div class="scratch-top">
-    <div class="scratch-title">Scratch &amp; Reveal!</div>
-    <div class="scratch-sub" id="scratchSub">Find your prize hidden under the cards</div>
+  <!-- SCREEN 3 — SCRATCH CARDS -->
+  <div class="screen" id="scratchScreen">
+    <div class="top-stripe"></div>
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Beemas" onerror="this.style.display='none';"/>
+    </div>
+    <div class="brand-name">Beemas</div>
+    <div class="brand-sub">You're a Winner! 🎊</div>
+    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
+    <div class="divider"></div>
+
+    <div class="scratch-header">
+      <div class="scratch-title">🎉 PICK YOUR PRIZE!</div>
+      <div class="scratch-sub">Scratch any one card to reveal your gift</div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+
+    <div class="prize-banner" id="prizeBanner">
+      <div class="prize-banner-label">🎁 Your Prize</div>
+      <div class="prize-banner-icon" id="prizeBannerIcon"></div>
+      <div class="prize-banner-name" id="prizeBannerName"></div>
+      <div class="prize-banner-claim" id="prizeBannerClaim"></div>
+    </div>
+
+    <button id="playAgainBtn">▶ PLAY AGAIN</button>
+    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
   </div>
-  <div class="cards-grid" id="cardsGrid"></div>
-</div>
 
-<!-- ⑤ Result -->
-<div class="screen hidden" id="resultScreen">
-  <div class="glass result-box">
-    <span class="result-emoji" id="resultEmoji">🎊</span>
-    <div class="result-title" id="resultTitle">You Won!</div>
-    <div class="result-prize" id="resultPrize"></div>
-    <div class="result-sub" id="resultSub">Show this screen to our staff to claim your prize!</div>
-    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:100%"></div></div>
-    <button class="result-btn" onclick="resetGame()">Play Again</button>
-  </div>
-</div>
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxX7Xc15nAsGpSgfSbbjX_kwalc0WNd_XaHrb88U82XUSuEl0xx3MQ0wn3M9CKqP_tH2Q/exec';
 
-<script>
-// ── Config ──────────────────────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxX7Xc15nAsGpSgfSbbjX_kwalc0WNd_XaHrb88U82XUSuEl0xx3MQ0wn3M9CKqP_tH2Q/exec';
-const IS_TEST   = new URLSearchParams(location.search).has('test');
+    const ALL_PRIZES = [
+      {icon:'🍦', name:'₹30 Off\nIce Cream',   winner:true},
+      {icon:'🍔', name:'50% Off\nBurger',       winner:true},
+      {icon:'🍕', name:'25% Off\nPizza',        winner:true},
+      {icon:'🍛', name:'50% Off\nBiryani',      winner:true},
+      {icon:'🥛', name:'Free\nBadam Milk',      winner:true},
+    ];
+    const LOSER = {icon:'😊', name:'Better Luck\nNext Time!', winner:false};
 
-const ALL_PRIZES = [
-  { id:'P1', icon:'🍦', name:'₹30 Off\nIce Cream',    winner:true  },
-  { id:'P2', icon:'🍔', name:'50% Off\nBurger',        winner:true  },
-  { id:'P3', icon:'🍕', name:'25% Off\nPizza',         winner:true  },
-  { id:'P4', icon:'🍛', name:'50% Off\nBiryani',       winner:true  },
-  { id:'P5', icon:'🥛', name:'Free\nBadam Milk',       winner:true  },
-];
-const LOSER = { id:'L0', icon:'😊', name:'Better Luck\nNext Time', winner:false };
-
-// ── Session tracking ─────────────────────────────────────────────
-let sesTotal=0, sesFailed=0, sesSuccess=0, sesPhone='', sesName='';
-
-async function sendSessionUpdate(prize) {
-  if (!sesPhone || SHEET_URL.startsWith('PASTE')) return;
-  try {
-    await fetch(`${SHEET_URL}?${new URLSearchParams({
-      action:'updateSession', phone:sesPhone,
-      total:sesTotal, failed:sesFailed, success:sesSuccess, prize:prize||'No Gift'
-    })}`, { method:'GET', mode:'no-cors' });
-  } catch(_) {}
-}
-
-// ── Particles ────────────────────────────────────────────────────
-(function(){
-  const c=['#e91e8c','#ff7c2a','#ff4d9e','#9c27b0','#ff8c42'];
-  for(let i=0;i<22;i++){
-    const d=document.createElement('div');
-    d.className='dot';
-    const s=Math.random()*6+3;
-    d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${c[i%c.length]};animation-duration:${Math.random()*12+8}s;animation-delay:-${Math.random()*12}s;`;
-    document.getElementById('particles').appendChild(d);
-  }
-})();
-
-// ── Screen helper ────────────────────────────────────────────────
-const screens = {};
-['register','instruct','timer','scratch','result'].forEach(id=>{
-  screens[id] = document.getElementById(id+'Screen');
-});
-function show(id){ Object.values(screens).forEach(s=>s.classList.add('hidden')); screens[id].classList.remove('hidden'); }
-
-// ── Audio ────────────────────────────────────────────────────────
-const ctx = new (window.AudioContext||window.webkitAudioContext)();
-function beep(f,d,vol=.4,type='sine'){
-  const o=ctx.createOscillator(),g=ctx.createGain();
-  o.connect(g);g.connect(ctx.destination);
-  o.frequency.value=f;o.type=type;
-  g.gain.setValueAtTime(vol,ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+d);
-  o.start();o.stop(ctx.currentTime+d);
-}
-function winSound(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25,.35),i*130)); }
-function loseSound(){ [330,262].forEach((f,i)=>setTimeout(()=>beep(f,.3,.25,'sawtooth'),i*200)); }
-function tapSound(){ beep(660,.08,.2); }
-function scratchSound(){ beep(200+Math.random()*400,.04,.08,'sawtooth'); }
-
-// ── Confetti ─────────────────────────────────────────────────────
-let confettiPieces=[],confettiRunning=false;
-const cCanvas=document.getElementById('confettiCanvas');
-const cCtx=cCanvas.getContext('2d');
-function launchConfetti(){
-  cCanvas.width=innerWidth;cCanvas.height=innerHeight;
-  confettiPieces=Array.from({length:100},()=>({
-    x:Math.random()*innerWidth,y:Math.random()*innerHeight-innerHeight,
-    w:Math.random()*10+6,h:Math.random()*5+3,
-    r:Math.random()*2*Math.PI,
-    vx:(Math.random()-.5)*3,vy:Math.random()*3+2,vr:(Math.random()-.5)*.15,
-    c:['#e91e8c','#ff7c2a','#ff4d9e','#9c27b0','#ffeb3b','#80ffb8'][Math.floor(Math.random()*6)]
-  }));
-  confettiRunning=true; animateConfetti();
-  setTimeout(()=>{confettiRunning=false;cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);},3500);
-}
-function animateConfetti(){
-  if(!confettiRunning)return;
-  cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
-  confettiPieces.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
-    if(p.y>cCanvas.height)p.y=-20;
-    cCtx.save();cCtx.translate(p.x,p.y);cCtx.rotate(p.r);
-    cCtx.fillStyle=p.c;cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cCtx.restore();
-  });
-  requestAnimationFrame(animateConfetti);
-}
-
-// ── Registration ─────────────────────────────────────────────────
-const submitBtn = document.getElementById('submitBtn');
-submitBtn.addEventListener('click', async ()=>{
-  const name  = document.getElementById('nameInput').value.trim();
-  const phone = document.getElementById('phoneInput').value.trim();
-  const status = document.getElementById('formStatus');
-  const rmsg   = document.getElementById('restrictMsg');
-  rmsg.style.display='none';
-  if(!name){ status.textContent='Please enter your name.'; return; }
-  if(phone.replace(/\D/g,'').length < 10){ status.textContent='Please enter a valid phone number.'; return; }
-  status.textContent='';
-  submitBtn.disabled=true;
-  submitBtn.textContent='Please wait…';
-
-  sesPhone = phone; sesName = name;
-
-  if(IS_TEST || SHEET_URL.startsWith('PASTE')){
-    sesTotal=0;sesFailed=0;sesSuccess=0;
-    show('instruct'); submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY"; return;
-  }
-
-  try {
-    const res  = await fetch(`${SHEET_URL}?${new URLSearchParams({action:'register',name,phone})}`);
-    const data = await res.json();
-    if(data.status==='restricted'){
-      rmsg.textContent = `You've already played ${data.playCount} time${data.playCount!==1?'s':''}. Max ${data.maxPlays} play${data.maxPlays!==1?'s':''} per customer. Thank you for visiting Beemas!`;
-      rmsg.style.display='block';
-      submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY"; return;
+    let sesTotal=0, sesFailed=0, sesSuccess=0, sesPhone='', sesName='';
+    async function sendSessionUpdate(prize) {
+      if (!sesPhone) return;
+      try {
+        await fetch(`${SHEET_URL}?${new URLSearchParams({
+          action:'updateSession', phone:sesPhone,
+          total:sesTotal, failed:sesFailed, success:sesSuccess, prize:prize||'No Gift'
+        })}`, { method:'GET', mode:'no-cors' });
+      } catch(_) {}
     }
-  } catch(_){}
 
-  sesTotal=0;sesFailed=0;sesSuccess=0;
-  show('instruct');
-  submitBtn.disabled=false; submitBtn.textContent="LET'S PLAY";
-});
-document.getElementById('phoneInput').addEventListener('keydown',e=>{if(e.key==='Enter')submitBtn.click();});
+    const IS_TEST = new URLSearchParams(window.location.search).has('test');
+    if (IS_TEST) setTimeout(showScratchScreen, 200);
 
-// ── Instruction ──────────────────────────────────────────────────
-document.getElementById('startBtn').addEventListener('click',()=>{ ctx.resume(); show('timer'); startTimer(); });
+    const submitBtn    = document.getElementById('submitBtn');
+    const submitStatus = document.getElementById('submitStatus');
+    const restrictBox  = document.getElementById('restrictBox');
 
-// ── Timer Game ───────────────────────────────────────────────────
-let timerInterval=null, barPct=100, won=false;
-const BAR_DURATION=3500, WIN_ZONE=[0,30];
+    submitBtn.addEventListener('click', async () => {
+      const name  = document.getElementById('inp-name').value.trim();
+      const phone = document.getElementById('inp-phone').value.trim();
+      restrictBox.style.display = 'none';
+      if (!name)                   { showStatus('Please enter your full name.', 'error'); return; }
+      if (!phone)                  { showStatus('Please enter your phone number.', 'error'); return; }
+      if (!/^\d{10}$/.test(phone)) { showStatus('Phone number must be exactly 10 digits.', 'error'); return; }
+      submitBtn.disabled = true; showStatus('Checking…', '');
+      try {
+        const res  = await fetch(`${SHEET_URL}?${new URLSearchParams({action:'register', name, phone})}`);
+        const data = await res.json();
+        if (data.status === 'restricted') {
+          restrictBox.textContent = `You've already played ${data.playCount} time${data.playCount!==1?'s':''}. Maximum ${data.maxPlays} play${data.maxPlays!==1?'s':''} per customer. Thank you for visiting Beemas!`;
+          restrictBox.style.display = 'block';
+          submitBtn.disabled = false; showStatus('', ''); return;
+        }
+      } catch(_) {}
+      sesPhone = phone; sesName = name; sesTotal = 0; sesFailed = 0; sesSuccess = 0;
+      showStatus('', ''); switchToGame();
+    });
+    document.getElementById('inp-phone').addEventListener('keydown', e => { if (e.key==='Enter') submitBtn.click(); });
 
-function startTimer(){
-  barPct=100; won=false;
-  const fill=document.getElementById('barFill');
-  const score=document.getElementById('tapScore');
-  const circle=document.getElementById('tapCircle');
-  fill.style.background='var(--grad)';
-  circle.textContent='🎯'; score.textContent='';
-  fill.style.width='100%';
-  const start=performance.now();
-  timerInterval=setInterval(()=>{
-    const elapsed=performance.now()-start;
-    barPct=Math.max(0,100-elapsed/BAR_DURATION*100);
-    fill.style.width=barPct+'%';
-    if(barPct<=WIN_ZONE[1]) fill.style.background=`linear-gradient(90deg,#80ffb8,#2ab800)`;
-    if(barPct<=0){ stop(); }
-  },40);
-}
+    function showStatus(msg, type) { submitStatus.textContent = msg; submitStatus.className = 'submit-status '+(type||''); }
 
-function stop(){
-  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
-  won = (barPct>=WIN_ZONE[0] && barPct<=WIN_ZONE[1]);
-  sesTotal++;
-  if(won) sesSuccess++; else sesFailed++;
-  sendSessionUpdate('No Gift');
-  tapSound();
-  const score=document.getElementById('tapScore');
-  score.textContent=Math.round(barPct)+'%';
-  setTimeout(()=>buildScratch(), 700);
-}
+    function switchToGame() {
+      const r = document.getElementById('regScreen'), g = document.getElementById('gameScreen');
+      r.classList.add('fade-out');
+      setTimeout(() => { r.classList.remove('active','fade-out'); g.classList.add('active','fade-in'); setTimeout(()=>g.classList.remove('fade-in'),500); init(); }, 450);
+    }
 
-document.getElementById('tapZone').addEventListener('click',()=>{ if(timerInterval) stop(); });
-document.addEventListener('keydown',e=>{ if(e.code==='Space'&&timerInterval){e.preventDefault();stop();} });
+    // ── TIMER GAME ───────────────────────────────────────────────
+    let targetMs=0, startTime=0, rafId=null, running=false, tries=0, bestDiff=Infinity;
+    const $=id=>document.getElementById(id);
+    const timerWrap=$('timerWrap'), timerDisplay=$('timerDisplay'), timerSec=$('timerSec'), timerHun=$('timerHun');
+    const mainBtn=$('mainBtn'), resultCard=$('resultCard'), resultIcon=$('resultIcon'), resultTitle=$('resultTitle'), resultSub=$('resultSub');
+    const diffBar=$('diffBar'), diffNote=$('diffNote'), autoResetBar=$('autoResetBar'), autoResetLabel=$('autoResetLabel');
+    const tryCount=$('tryCount'), bestLabel=$('bestLabel'), bestVal=$('bestVal'), historyWrap=$('historyWrap'), historyList=$('historyList'), targetDisplay=$('targetDisplay');
 
-// ── Scratch Cards ────────────────────────────────────────────────
-let cards=[], cardsDone=0;
+    function init() { resetTimer(); }
 
-function pickCards(){
-  // shuffle 5 prizes, pick 3, add 1 loser, shuffle all 4
-  const shuffled=[...ALL_PRIZES].sort(()=>Math.random()-.5);
-  const three=shuffled.slice(0,3);
-  const four=[...three,LOSER].sort(()=>Math.random()-.5);
-  return four;
-}
+    function resetTimer() {
+      const secs=Math.floor(Math.random()*4)+3, hund=Math.floor(Math.random()*100);
+      targetMs=secs*1000+hund*10; targetDisplay.textContent=`${pad(secs)}:${pad(hund)}`;
+      running=false; if(rafId) cancelAnimationFrame(rafId);
+      timerSec.textContent='00'; timerHun.textContent='00';
+      timerDisplay.className='timer-display'; timerWrap.classList.remove('running');
+      mainBtn.textContent='▶  START CHALLENGE'; mainBtn.className='state-start'; mainBtn.disabled=false;
+      resultCard.className='result-card';
+    }
 
-function buildScratch(){
-  cards=pickCards();
-  cardsDone=0;
-  const grid=document.getElementById('cardsGrid');
-  grid.innerHTML='';
-  show('scratch');
-  document.getElementById('scratchSub').textContent='Find your prize hidden under the cards';
+    function tick() {
+      if(!running) return;
+      const e=Date.now()-startTime;
+      if(e>targetMs+6000){stop(e);return;}
+      const h=Math.floor(e/10); timerSec.textContent=pad(Math.floor(h/100)); timerHun.textContent=pad(h%100);
+      rafId=requestAnimationFrame(tick);
+    }
 
-  cards.forEach((prize,i)=>{
-    const wrap=document.createElement('div'); wrap.className='card-wrap';
-    const beneath=document.createElement('div');
-    beneath.className='card-prize '+(prize.winner?'win':'lose');
-    beneath.innerHTML=`<div class="card-prize-icon">${prize.icon}</div><div class="card-prize-name">${prize.name.replace('\n','<br>')}</div>`;
-    const result=document.createElement('div'); result.className='card-result'; result.id='cr-'+i;
-    const canvas=document.createElement('canvas'); canvas.className='card-canvas'; canvas.id='cc-'+i;
-    wrap.appendChild(beneath); wrap.appendChild(result); wrap.appendChild(canvas);
-    grid.appendChild(wrap);
-    initCard(canvas, prize, i);
-  });
-}
+    function start() {
+      running=true; startTime=Date.now();
+      timerDisplay.className='timer-display running'; timerWrap.classList.add('running');
+      mainBtn.textContent='⬛  STOP!'; mainBtn.className='state-stop';
+      playStart(); startTicking(); rafId=requestAnimationFrame(tick);
+    }
 
-function initCard(canvas, prize, idx){
-  const wrap=canvas.parentElement;
-  const W=wrap.offsetWidth||160, H=wrap.offsetHeight||160;
-  canvas.width=W; canvas.height=H;
-  const c=canvas.getContext('2d');
+    function stop(forced) {
+      if(!running) return; running=false; cancelAnimationFrame(rafId);
+      const elapsed=(forced!==undefined)?forced:Date.now()-startTime;
+      const diff=Math.abs(elapsed-targetMs);
+      const won=Math.floor(elapsed/10)===Math.floor(targetMs/10);
+      tries++; tryCount.textContent=tries;
+      if(diff<bestDiff){bestDiff=diff; bestVal.textContent=diff+'ms'; bestLabel.style.display='';}
+      const h=Math.floor(elapsed/10); timerSec.textContent=pad(Math.floor(h/100)); timerHun.textContent=pad(h%100);
+      timerWrap.classList.remove('running'); timerDisplay.className='timer-display '+(won?'won':'lost');
+      mainBtn.disabled=true; mainBtn.className=''; mainBtn.textContent=won?'🏆 WINNER!':'✕ MISSED';
+      sesTotal++; if(won) sesSuccess++; else sesFailed++;
+      sendSessionUpdate('No Gift');
+      stopTicking(); playClick(); showResult(won,elapsed,diff); addHistory(won,elapsed,diff);
+      if(won){confettiAnim(); setTimeout(playWin,80);} else setTimeout(playMiss,80);
+    }
 
-  // Overlay gradient
-  const g=c.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'#2a0028');g.addColorStop(.5,'#1a0018');g.addColorStop(1,'#0d000d');
-  c.fillStyle=g; c.fillRect(0,0,W,H);
+    mainBtn.addEventListener('click', () => running ? stop() : start());
 
-  // Overlay text "B"
-  c.font=`bold ${W*.55}px 'Playfair Display',serif`;
-  c.textAlign='center'; c.textBaseline='middle';
-  c.fillStyle='rgba(233,30,140,0.12)';
-  c.fillText('B',W/2,H/2);
+    function showResult(won,elapsed,diff) {
+      resultCard.className='result-card '+(won?'win':'lose');
+      resultIcon.textContent=won?'🏆':'🍽️'; resultTitle.textContent=won?'YOU WON!':'NOT QUITE!';
+      const at=msToLabel(elapsed), dir=elapsed>targetMs?'over':'under';
+      resultSub.innerHTML=won?`You stopped at <strong>${at}</strong> — only <strong>${diff}ms</strong> off!`:`You stopped at <strong>${at}</strong><br>You were <strong>${diff}ms ${dir}</strong> the target. Try again!`;
+      setTimeout(()=>{diffBar.style.width=(won?100:Math.max(0,100-diff/5)).toFixed(1)+'%';},60);
+      diffNote.textContent=won?'✓ Exact match!':`${diff}ms off — try again!`;
+      const delay=won?2000:2500;
+      autoResetLabel.textContent=won?'Scratch card loading…':'Restarting in 2.5s…';
+      autoResetBar.classList.remove('running'); autoResetBar.style.animationDuration=(delay/1000)+'s';
+      void autoResetBar.offsetWidth; autoResetBar.classList.add('running');
+      setTimeout(won?showScratchScreen:resetTimer, delay);
+    }
 
-  // Scratch hint
-  c.font=`600 ${W*.1}px 'Poppins',sans-serif`;
-  c.fillStyle='rgba(255,255,255,0.35)';
-  c.fillText('SCRATCH',W/2,H*.82);
+    function addHistory(won,elapsed,diff) {
+      historyWrap.style.display='block';
+      const li=document.createElement('li'); li.className='history-item '+(won?'h-win':'h-lose');
+      li.innerHTML=`<span class="h-num">#${tries}</span><span class="h-time">${msToLabel(elapsed)}</span><span class="h-diff">${diff}ms off</span><span class="h-res">${won?'✓ WIN':'✗ Miss'}</span>`;
+      historyList.prepend(li);
+    }
 
-  let scratching=false, scratchedPx=0, totalPx=W*H;
-  const revealed={};
+    function msToLabel(ms){const h=Math.floor(ms/10);return `${pad(Math.floor(h/100))}:${pad(h%100)}`;}
+    function pad(n){return String(n).padStart(2,'0');}
 
-  function getPos(e){
-    const r=canvas.getBoundingClientRect();
-    const src=e.touches?e.touches[0]:e;
-    return {x:src.clientX-r.left,y:src.clientY-r.top};
-  }
+    // ── AUDIO ────────────────────────────────────────────────────
+    let audioCtx=null, tickTimer=null;
+    function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
+    function playTick(){const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(1000,c.currentTime);g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.04);o.start(c.currentTime);o.stop(c.currentTime+.05);}
+    function startTicking(){stopTicking();function s(){if(!running)return;playTick();const r=targetMs-(Date.now()-startTime);tickTimer=setTimeout(s,r<1000?150:r<3000?400:1000);}s();}
+    function stopTicking(){if(tickTimer){clearTimeout(tickTimer);tickTimer=null;}}
+    function playStart(){const c=getCtx(),t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(880,t+.3);g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.start(t);o.stop(t+.55);}
+    function playClick(){const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.setValueAtTime(800,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+.08);g.gain.setValueAtTime(.3,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.1);o.start(c.currentTime);o.stop(c.currentTime+.12);}
+    function playWin(){const c=getCtx();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.setValueAtTime(f,c.currentTime+i*.12);g.gain.setValueAtTime(.25,c.currentTime+i*.12);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.12+.3);o.start(c.currentTime+i*.12);o.stop(c.currentTime+i*.12+.35);});}
+    function playMiss(){const c=getCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(400,c.currentTime);o.frequency.linearRampToValueAtTime(100,c.currentTime+.35);g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start(c.currentTime);o.stop(c.currentTime+.42);}
 
-  function scratch(e){
-    if(!scratching||canvas.classList.contains('scratched'))return;
-    e.preventDefault();
-    const {x,y}=getPos(e);
-    scratchSound();
-    c.globalCompositeOperation='destination-out';
-    c.beginPath(); c.arc(x,y,22,0,Math.PI*2); c.fill();
+    // ── CONFETTI ─────────────────────────────────────────────────
+    function confettiAnim(){
+      const cv=$('confetti'),ctx=cv.getContext('2d'); cv.width=window.innerWidth; cv.height=window.innerHeight;
+      const pal=['#e91e8c','#ff4d9e','#ff7c2a','#9c27b0','#ffffff','#80ffb8'];
+      const pieces=Array.from({length:140},()=>({x:Math.random()*cv.width,y:Math.random()*-cv.height*.5-10,w:Math.random()*10+4,h:Math.random()*5+3,color:pal[Math.floor(Math.random()*pal.length)],angle:Math.random()*Math.PI*2,spin:(Math.random()-.5)*.18,vx:(Math.random()-.5)*3.5,vy:Math.random()*4+2}));
+      function draw(){ctx.clearRect(0,0,cv.width,cv.height);let any=false;pieces.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.angle+=p.spin;if(p.y<cv.height+20)any=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});if(any)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);}
+      draw();
+    }
 
-    const px=c.getImageData(0,0,W,H).data;
-    let erased=0;
-    for(let j=3;j<px.length;j+=4) if(px[j]<128) erased++;
-    if(erased/totalPx>.45 && !revealed[idx]){ revealed[idx]=true; revealChosenCard(prize,idx,canvas); }
-  }
+    // ── SCRATCH CARDS ────────────────────────────────────────────
+    let scratchDone = false;
 
-  canvas.addEventListener('mousedown', e=>{scratching=true;scratch(e);});
-  canvas.addEventListener('mousemove', scratch);
-  canvas.addEventListener('mouseup',   ()=>scratching=false);
-  canvas.addEventListener('mouseleave',()=>scratching=false);
-  canvas.addEventListener('touchstart',e=>{scratching=true;scratch(e);},{passive:false});
-  canvas.addEventListener('touchmove', scratch,{passive:false});
-  canvas.addEventListener('touchend',  ()=>scratching=false);
-}
+    function showScratchScreen() {
+      const g=$('gameScreen'), s=$('scratchScreen');
+      g.classList.add('fade-out');
+      setTimeout(async()=>{g.classList.remove('active','fade-out');s.classList.add('active','fade-in');setTimeout(()=>s.classList.remove('fade-in'),500);await buildCards();},450);
+    }
 
-function revealChosenCard(prize, idx, canvas){
-  canvas.classList.add('scratched');
-  const label=document.getElementById('cr-'+idx);
-  if(prize.winner){ label.textContent='YOU WON!'; label.className='card-result show-win'; }
-  else            { label.textContent='NEXT TIME'; label.className='card-result show-lose'; }
+    function pickCards() {
+      const shuffled=[...ALL_PRIZES].sort(()=>Math.random()-.5);
+      return [...shuffled.slice(0,3), LOSER].sort(()=>Math.random()-.5);
+    }
 
-  // lock other cards
-  document.querySelectorAll('.card-canvas').forEach((c,i)=>{ if(i!==idx) c.classList.add('scratched'); });
+    async function buildCards() {
+      const grid=$('cardsGrid'); grid.innerHTML=''; scratchDone=false;
+      $('prizeBanner').className='prize-banner'; $('playAgainBtn').className='';
+      const prizes=pickCards();
+      prizes.forEach((prize,i)=>{
+        const item=document.createElement('div'); item.className='card-item';
+        const pd=document.createElement('div'); pd.className='card-prize'+(prize.winner===false?' is-loser':'');
+        pd.innerHTML=`<div class="card-prize-icon">${prize.icon}</div><div class="card-prize-name">${prize.name.replace('\n','<br>')}</div>`;
+        const nd=document.createElement('div'); nd.className='card-num'; nd.textContent='#'+(i+1);
+        const canvas=document.createElement('canvas'); canvas.className='card-canvas';
+        item.appendChild(pd); item.appendChild(nd); item.appendChild(canvas); grid.appendChild(item);
+        setTimeout(()=>initCardCanvas(canvas,item,prize),80);
+      });
+    }
 
-  const pName=prize.name.replace('\n',' ');
-  sendSessionUpdate(prize.winner ? pName : 'No Gift');
+    function initCardCanvas(canvas,item,prize){
+      const w=item.offsetWidth||150, h=item.offsetHeight||100;
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      const g=ctx.createLinearGradient(0,0,w,h);
+      g.addColorStop(0,'#2a0022'); g.addColorStop(.4,'#1a0014'); g.addColorStop(1,'#0d000a');
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='rgba(233,30,140,0.3)'; ctx.font=`bold ${Math.floor(h*.3)}px 'Playfair Display',serif`;
+      ctx.fillText('B',w/2,h/2-4);
+      ctx.font=`${Math.floor(h*.1)}px Raleway,sans-serif`; ctx.fillStyle='rgba(233,30,140,0.2)'; ctx.fillText('SCRATCH HERE',w/2,h-11);
+      let active=false, lx=0, ly=0;
+      function xy(e){const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:(s.clientX-r.left)*(w/r.width),y:(s.clientY-r.top)*(h/r.height)};}
+      function doScratch(e){if(!active||scratchDone)return;e.preventDefault();const p=xy(e);ctx.globalCompositeOperation='destination-out';ctx.lineWidth=w*.30;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.arc(p.x,p.y,w*.15,0,Math.PI*2);ctx.fill();lx=p.x;ly=p.y;checkThreshold(canvas,item,prize);}
+      function begin(e){if(scratchDone)return;active=true;const p=xy(e);lx=p.x;ly=p.y;doScratch(e);}
+      canvas.addEventListener('mousedown',begin); canvas.addEventListener('mousemove',doScratch); canvas.addEventListener('mouseup',()=>active=false);
+      canvas.addEventListener('touchstart',begin,{passive:false}); canvas.addEventListener('touchmove',doScratch,{passive:false}); canvas.addEventListener('touchend',()=>active=false);
+    }
 
-  // Claim prize from sheet (reduce qty)
-  if(prize.winner && !SHEET_URL.startsWith('PASTE')){
-    fetch(`${SHEET_URL}?${new URLSearchParams({action:'claimPrize',prizeId:prize.id,phone:sesPhone})}`,{mode:'no-cors'}).catch(()=>{});
-  }
+    function checkThreshold(canvas,item,prize){
+      const ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+      let cleared=0; for(let i=3;i<data.length;i+=4)if(data[i]<128)cleared++;
+      if(cleared/(canvas.width*canvas.height)>.38) revealChosenCard(item,canvas,prize);
+    }
 
-  setTimeout(()=>showResult(prize), 900);
-}
+    async function revealChosenCard(item,canvas,prize){
+      if(scratchDone) return; scratchDone=true;
+      canvas.classList.add('fading'); setTimeout(()=>canvas.style.display='none',380); item.classList.add('scratched');
+      $('prizeBannerIcon').textContent=prize.icon;
+      $('prizeBannerName').textContent=prize.name.replace('\n',' ');
+      $('prizeBannerClaim').textContent=prize.winner!==false?'Show this screen to our staff at the counter to claim your prize! One per visit.':'Better luck next time! Come back on your next visit.';
+      sendSessionUpdate(prize.winner!==false ? prize.name.replace('\n',' ') : 'No Gift');
+      if(prize.winner && prize.id){
+        fetch(`${SHEET_URL}?${new URLSearchParams({action:'claimPrize',prizeId:prize.id,phone:sesPhone})}`,{mode:'no-cors'}).catch(()=>{});
+      }
+      $('prizeBanner').className='prize-banner visible'+(prize.winner===false?' is-loser':'');
+      const others=Array.from($('cardsGrid').querySelectorAll('.card-item')).filter(el=>el!==item);
+      others.forEach((el,idx)=>{setTimeout(()=>{const c=el.querySelector('.card-canvas');if(c){c.classList.add('fading');setTimeout(()=>c.style.display='none',370);}el.classList.add('scratched');},200+idx*110);});
+      setTimeout(()=>$('playAgainBtn').className='visible', 200+others.length*110+500);
+    }
 
-// ── Result ───────────────────────────────────────────────────────
-let resetTimer=null, resetPct=100;
-function showResult(prize){
-  show('result');
-  const emoji=document.getElementById('resultEmoji');
-  const title=document.getElementById('resultTitle');
-  const prizeEl=document.getElementById('resultPrize');
-  const sub=document.getElementById('resultSub');
+    $('playAgainBtn').addEventListener('click',()=>{
+      const s=$('scratchScreen'),g=$('gameScreen');s.classList.add('fade-out');
+      setTimeout(()=>{s.classList.remove('active','fade-out');g.classList.add('active','fade-in');setTimeout(()=>g.classList.remove('fade-in'),500);resetTimer();},450);
+    });
 
-  if(prize.winner){
-    emoji.textContent=prize.icon;
-    title.textContent='Congratulations!';
-    prizeEl.textContent=prize.name.replace('\n',' ');
-    sub.textContent='Show this screen to our staff to claim your prize!';
-    winSound(); launchConfetti();
-  } else {
-    emoji.textContent='😊';
-    title.textContent='Better Luck Next Time!';
-    prizeEl.textContent='';
-    sub.textContent='Thank you for playing at Beemas. Visit us again for another chance to win!';
-    loseSound();
-  }
-
-  resetPct=100;
-  document.getElementById('progressBar').style.width='100%';
-  const BAR_TIME=8000;
-  const step=100/(BAR_TIME/50);
-  if(resetTimer) clearInterval(resetTimer);
-  resetTimer=setInterval(()=>{
-    resetPct=Math.max(0,resetPct-step);
-    document.getElementById('progressBar').style.width=resetPct+'%';
-    if(resetPct<=0){ clearInterval(resetTimer); resetGame(); }
-  },50);
-}
-
-function resetGame(){
-  if(resetTimer){clearInterval(resetTimer);resetTimer=null;}
-  confettiRunning=false; cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
-  sesTotal=0;sesFailed=0;sesSuccess=0;sesPhone='';sesName='';
-  document.getElementById('nameInput').value='';
-  document.getElementById('phoneInput').value='';
-  document.getElementById('formStatus').textContent='';
-  document.getElementById('restrictMsg').style.display='none';
-  show('register');
-}
-</script>
+    init();
+  </script>
 </body>
 </html>
