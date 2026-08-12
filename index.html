@@ -42,8 +42,8 @@
       box-shadow: 0 0 16px var(--glow);
     }
 
-    .logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 4px; }
-    .logo-img  { height: 72px; object-fit: contain; filter: drop-shadow(0 0 14px var(--glow)); }
+    .logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; }
+    .logo-img  { height: 110px; object-fit: contain; filter: drop-shadow(0 0 14px var(--glow)); }
     .logo-fallback {
       width: 80px; height: 80px; border: 2px solid var(--pk2); border-radius: 50%;
       background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
@@ -278,7 +278,18 @@
     #playAgainBtn.visible { display: block; }
 
     #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
-    footer { margin-top: 40px; font-size: .62rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; text-align: center; }
+    footer { display: none; }
+    .telugu-quote {
+      width: 100%; max-width: 480px; margin-top: 28px; margin-bottom: 10px;
+      background: rgba(233,30,140,.06); border: 1px solid rgba(233,30,140,.16);
+      border-left: 4px solid var(--pk); border-radius: var(--radius);
+      padding: 18px 20px; text-align: center;
+    }
+    .telugu-quote p {
+      font-size: 1.05rem; line-height: 1.85; color: var(--text);
+      font-weight: 500; letter-spacing: .01em;
+    }
+    .telugu-quote p strong { color: var(--pk2); }
   </style>
 </head>
 <body>
@@ -292,9 +303,6 @@
         onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex';"/>
       <div class="logo-fallback" id="logoFb" style="display:none">🍽️</div>
     </div>
-    <div class="brand-name">Beemas</div>
-    <div class="brand-sub">Kavali · Nellore District · AP</div>
-    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
     <div class="divider"></div>
 
     <div class="reg-card">
@@ -312,7 +320,9 @@
       <div class="submit-status" id="submitStatus"></div>
       <div class="restrict-box" id="restrictBox"></div>
     </div>
-    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
+    <div class="telugu-quote">
+      <p>మీ ఆర్డర్ విషయంలో మాపై నమ్మకం ఉంచినందుకు ధన్యవాదాలు <strong>💛</strong><br>మీరు ఇందులో భాగమయ్యారు! ఇప్పుడే <strong>BEEMAS</strong> గేమ్ ఆడండి మరియు గెలిచే అవకాశాన్ని పొందండి.</p>
+    </div>
   </div>
 
   <!-- SCREEN 2 — GAME -->
@@ -321,9 +331,6 @@
     <div class="logo-wrap">
       <img class="logo-img" src="logo.png" alt="Beemas" onerror="this.style.display='none';"/>
     </div>
-    <div class="brand-name">Beemas</div>
-    <div class="brand-sub">Kavali · Nellore District · AP</div>
-    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
     <div class="divider"></div>
 
     <div class="target-card">
@@ -373,7 +380,6 @@
       <ul class="history-list" id="historyList"></ul>
     </div>
 
-    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
   </div>
 
   <!-- SCREEN 3 — SCRATCH CARDS -->
@@ -382,9 +388,7 @@
     <div class="logo-wrap">
       <img class="logo-img" src="logo.png" alt="Beemas" onerror="this.style.display='none';"/>
     </div>
-    <div class="brand-name">Beemas</div>
-    <div class="brand-sub">You're a Winner! 🎊</div>
-    <div class="brand-address"><span>📍 Opposite MRO Office, Kavali</span></div>
+    <div class="brand-sub" style="font-size:.9rem;font-weight:700;color:var(--pk2);">You're a Winner! 🎊</div>
     <div class="divider"></div>
 
     <div class="scratch-header">
@@ -402,7 +406,6 @@
     </div>
 
     <button id="playAgainBtn">▶ PLAY AGAIN</button>
-    <footer>Beemas &mdash; Kavali, Nellore District, AP</footer>
   </div>
 
   <script>
