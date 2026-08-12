@@ -43,7 +43,7 @@
     }
 
     .logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; }
-    .logo-img  { height: 110px; object-fit: contain; filter: drop-shadow(0 0 14px var(--glow)); }
+    .logo-img  { height: 130px; object-fit: contain; filter: drop-shadow(0 0 14px var(--glow)); }
     .logo-fallback {
       width: 80px; height: 80px; border: 2px solid var(--pk2); border-radius: 50%;
       background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
@@ -279,8 +279,28 @@
 
     #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
     footer { display: none; }
+    /* ── Prize chips on reg screen ─── */
+    .prizes-preview { width: 100%; max-width: 480px; margin-bottom: 16px; }
+    .prizes-preview-label {
+      font-size: .6rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); text-align: center; margin-bottom: 10px;
+    }
+    .prizes-chips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+    .p-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: #fff; border: 1px solid rgba(233,30,140,.18); border-top: 2px solid;
+      border-radius: 10px; padding: 6px 11px; font-size: .72rem; font-weight: 700; color: var(--text);
+      white-space: nowrap; box-shadow: 0 2px 8px rgba(233,30,140,.07);
+    }
+    .p-chip:nth-child(1){border-top-color:#e91e8c;}
+    .p-chip:nth-child(2){border-top-color:#ff7c2a;}
+    .p-chip:nth-child(3){border-top-color:#9c27b0;}
+    .p-chip:nth-child(4){border-top-color:#e91e8c;}
+    .p-chip:nth-child(5){border-top-color:#ff7c2a;}
+
+    /* ── Telugu quote ─── */
     .telugu-quote {
-      width: 100%; max-width: 480px; margin-top: 28px; margin-bottom: 10px;
+      width: 100%; max-width: 480px; margin-top: 20px; margin-bottom: 0;
       background: rgba(233,30,140,.06); border: 1px solid rgba(233,30,140,.16);
       border-left: 4px solid var(--pk); border-radius: var(--radius);
       padding: 18px 20px; text-align: center;
@@ -290,6 +310,15 @@
       font-weight: 500; letter-spacing: .01em;
     }
     .telugu-quote p strong { color: var(--pk2); }
+
+    /* ── Address bar ─── */
+    .address-bar {
+      width: 100%; max-width: 480px; margin-top: 14px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+      font-size: .78rem; font-weight: 600; color: var(--pk2); text-align: center;
+    }
+    .address-bar span { display: inline-block; }
+    .address-bar .addr-dot { color: var(--muted); font-size: .7rem; }
   </style>
 </head>
 <body>
@@ -303,6 +332,17 @@
         onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex';"/>
       <div class="logo-fallback" id="logoFb" style="display:none">🍽️</div>
     </div>
+    <div class="prizes-preview">
+      <div class="prizes-preview-label">🎁 Today's Prizes — Stop the Timer to Win!</div>
+      <div class="prizes-chips">
+        <div class="p-chip">🍦 Just ₹30 — Ice Cream</div>
+        <div class="p-chip">🍔 50% Off Burger</div>
+        <div class="p-chip">🍕 25% Off Pizza</div>
+        <div class="p-chip">🍛 50% Off Biryani</div>
+        <div class="p-chip">🥛 Free Badam Milk</div>
+      </div>
+    </div>
+
     <div class="divider"></div>
 
     <div class="reg-card">
@@ -322,6 +362,11 @@
     </div>
     <div class="telugu-quote">
       <p>మీ ఆర్డర్ విషయంలో మాపై నమ్మకం ఉంచినందుకు ధన్యవాదాలు <strong>💛</strong><br>మీరు ఇందులో భాగమయ్యారు! ఇప్పుడే <strong>BEEMAS</strong> గేమ్ ఆడండి మరియు గెలిచే అవకాశాన్ని పొందండి.</p>
+    </div>
+    <div class="address-bar">
+      <span>📍 Opp MRO Office, Kavali 524201, AP</span>
+      <span class="addr-dot">•</span>
+      <span>📞 98491 69879</span>
     </div>
   </div>
 
